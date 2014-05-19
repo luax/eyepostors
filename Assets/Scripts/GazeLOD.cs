@@ -4,29 +4,57 @@ using System.Collections;
 public class GazeLOD : MonoBehaviour
 {
     private MeshRenderer meshRenderer;
-
     private Material red;
     private Material blue;
+    private Material white;
 
-    void Awake()
+    public float highLimit = 0.2f;
+    public float standardLimit = 0.5f;
+
+    private enum LOD
+    {
+        High,
+        Standard,
+        Low
+    }
+
+    public void Awake()
     {
         meshRenderer = GetComponent<MeshRenderer>();
         red = (Material)Resources.Load("Red");
         blue = (Material)Resources.Load("Blue");
-        meshRenderer.material = red;
+        white = (Material)Resources.Load("White");
+        meshRenderer.material = white;
     }
 
-    void Update()
+    public void Update()
     {
         float distance = GazeDistance.Instance.CalculateDistance(transform.position);
-        Debug.Log(distance);
-        if (distance < 0.25)
+        switch (GetLOD(distance))
         {
-            meshRenderer.material = red;
+            case LOD.High:
+                meshRenderer.material = red;
+                break;
+            case LOD.Standard:
+                meshRenderer.material = blue;
+                break;
+            case LOD.Low:
+                meshRenderer.material = white;
+                break;
         }
-        else
+
+    }
+
+    private LOD GetLOD(float distance)
+    {
+        if (distance < highLimit)
         {
-            meshRenderer.material = blue;
+            return LOD.High;
         }
+        else if (distance < standardLimit)
+        {
+            return LOD.Standard;
+        }
+        return LOD.Low;
     }
 }

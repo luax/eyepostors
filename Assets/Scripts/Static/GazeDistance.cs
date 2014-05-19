@@ -32,7 +32,7 @@ public class GazeDistance : Singleton<GazeDistance>
     {
         if (!gazePoint.IsValid || !gazePoint.IsWithinScreenBounds)
         {
-            return 1;
+            return float.MaxValue;
         }
         position = Camera.main.WorldToScreenPoint(position);
         Vector2 gaze = new Vector2(gazePoint.Screen.x / Screen.width, gazePoint.Screen.y / Screen.height);
