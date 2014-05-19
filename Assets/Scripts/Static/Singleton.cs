@@ -15,7 +15,9 @@ public class Singleton<T> : MonoBehaviour where T : MonoBehaviour {
 
                 if (instance == null)
                 {
-                    Debug.LogError("Instance of " + typeof(T) + " is missing.");
+                    GameObject singleton = new GameObject();
+                    instance = singleton.AddComponent<T>();
+                    singleton.name = "(singleton) " + typeof(T).ToString();
                 }
             }
             return instance;
