@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Menu : MonoBehaviour {
+public class Menu : MonoBehaviour
+{
     private bool showMenu;
     private GUIStyle textStyle;
 

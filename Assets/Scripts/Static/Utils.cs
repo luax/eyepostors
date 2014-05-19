@@ -36,12 +36,12 @@ public class Utils : Singleton<Utils>
     public void LockPlayer(bool b)
     {
         GameObject player = GameObject.FindGameObjectWithTag("Player");
-		if (player == null)
-		{
-			return;
-		}
-		MouseLook mX = (MouseLook)player.GetComponent(typeof(MouseLook));
-		MouseLook mY = (MouseLook)Camera.main.gameObject.GetComponent(typeof(MouseLook));
+        if (player == null)
+        {
+            return;
+        }
+        MouseLook mX = (MouseLook)player.GetComponent(typeof(MouseLook));
+        MouseLook mY = (MouseLook)Camera.main.gameObject.GetComponent(typeof(MouseLook));
 
         if (mX != null)
         {
