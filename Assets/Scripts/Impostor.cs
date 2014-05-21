@@ -1,18 +1,22 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Imposter : MonoBehaviour
+public class Impostor : MonoBehaviour
 {
-	public GameObject parent;
 	public float FPS;
 	public int numberOfFrames = 15;
 	public int numberOfAngles = 15;
 
+	// Component references
+	private Transform impostorTransform;
 	private Transform parentTransform;
+	private Transform cameraTransform;
+	private Renderer impostorRenderer;
+	private Mesh quad;
+	
 	private float frameTime;
 	private int frame;
-	private Mesh quad;
-	private Transform cameraTransform;
+
 	private int currentAngleIndex;
 	private int currentDirection;
 	private const int RIGHT = 0;
@@ -20,10 +24,12 @@ public class Imposter : MonoBehaviour
 
 	void Start ()
 	{
-		SetUVs ();
-		SetMaterial(0);
+		impostorTransform = transform;
 		cameraTransform = Camera.main.transform;
-		parentTransform = parent.transform;
+		parentTransform = impostorTransform.parent;
+		impostorRenderer = renderer;
+		SetUVs ();
+		SetMaterial (0);
 	}
 	
 	void Update ()
@@ -36,9 +42,9 @@ public class Imposter : MonoBehaviour
 	private void LookAtCamera ()
 	{
 		Vector3 cPos = cameraTransform.position;
-		Vector3 tPos = transform.position;
-		transform.LookAt (new Vector3 (cPos.x, tPos.y, cPos.z));
-		transform.Rotate (new Vector3 (0, 180f, 0));
+		Vector3 tPos = impostorTransform.position;
+		impostorTransform.LookAt (new Vector3 (cPos.x, tPos.y, cPos.z));
+		impostorTransform.Rotate (new Vector3 (0, 180f, 0));
 	}
 
 	public void UpdateAnimation ()
@@ -63,9 +69,9 @@ public class Imposter : MonoBehaviour
 		int index = Mathf.RoundToInt ((angle / 180f) * (numberOfAngles - 1));
 		if (index != currentAngleIndex) {
 			// Only update when we need to
-            SetMaterial(index);
+			SetMaterial (index);
 			currentAngleIndex = index;
-			Vector3 parentRight = parent.transform.right;
+			Vector3 parentRight = parentTransform.right;
 			parentRight.y = 0;
 			float dot = Vector3.Dot (cameraToObject, parentRight);
 			if (((dot > 0f) && currentDirection == LEFT) ||
@@ -92,7 +98,7 @@ public class Imposter : MonoBehaviour
 
 	public int GetFrame ()
 	{
-		Vector2 offset = renderer.material.GetTextureOffset ("_MainTex");
+		Vector2 offset = impostorRenderer.material.GetTextureOffset ("_MainTex");
 		return (int)((offset.x / 0.25f) + (4f * offset.y / -0.25f));
 	}
 
@@ -101,8 +107,8 @@ public class Imposter : MonoBehaviour
 		float x = (0.25f * (frameNumber % 4));
 		float y = (-0.25f * (frameNumber / 4));
 		Vector2 offset = new Vector2 (x, y);
-		renderer.material.SetTextureOffset ("_MainTex", offset);
-		renderer.material.SetTextureOffset ("_BumpMap", offset);
+		impostorRenderer.material.SetTextureOffset ("_MainTex", offset);
+		impostorRenderer.material.SetTextureOffset ("_BumpMap", offset);
 	}
 
 	public float GetAnimationPercentage ()
@@ -126,8 +132,9 @@ public class Imposter : MonoBehaviour
 		};
 	}
 
-    private void SetMaterial(int index)
-    {
-        renderer.material = Materials.Instance.GetMaterial(index);
-    }
+	private void SetMaterial (int index)
+	{
+		impostorRenderer.material = Materials.Instance.GetMaterial (index);
+		SetFrame (frame);
+	}
 }

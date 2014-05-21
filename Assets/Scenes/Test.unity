@@ -508,10 +508,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02744a539bf292e488a87206c28709b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  parent: {fileID: 0}
-  FPS: 30
+  FPS: 2
   numberOfFrames: 15
   numberOfAngles: 15
+  impostorTransform: {fileID: 0}
+  parentTransform: {fileID: 0}
+  cameraTransform: {fileID: 0}
+  impostorRenderer: {fileID: 0}
+  quad: {fileID: 0}
+  frameTime: 0
+  frame: 0
+  currentAngleIndex: 0
+  currentDirection: 0
 --- !u!23 &1579315198
 Renderer:
   m_ObjectHideFlags: 0
