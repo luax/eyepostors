@@ -3,20 +3,18 @@ using System.Collections;
 
 public class Impostor : MonoBehaviour
 {
-	public float FPS;
 	public int numberOfFrames = 15;
 	public int numberOfAngles = 15;
-
+	
 	// Component references
+	private Animator animator;
 	private Transform impostorTransform;
 	private Transform parentTransform;
 	private Transform cameraTransform;
 	private Renderer impostorRenderer;
 	private Mesh quad;
-	
-	private float frameTime;
-	private int frame;
 
+	private int frame;
 	private int currentAngleIndex;
 	private int currentDirection;
 	private const int RIGHT = 0;
@@ -28,11 +26,12 @@ public class Impostor : MonoBehaviour
 		cameraTransform = Camera.main.transform;
 		parentTransform = impostorTransform.parent;
 		impostorRenderer = renderer;
+		animator = impostorTransform.parent.gameObject.GetComponent<Animator> ();
 		SetUVs ();
 		SetMaterial (0);
 	}
 	
-	void Update ()
+	public void Update ()
 	{
 		UpdateRotation ();
 		UpdateAnimation ();
@@ -49,15 +48,9 @@ public class Impostor : MonoBehaviour
 
 	public void UpdateAnimation ()
 	{
-		frameTime += Time.deltaTime;
-		if (frameTime > (1f / FPS)) {
-			frame++;
-			if (frame >= numberOfFrames) {
-				frame = 0;
-			}
-			SetFrame (frame);
-			frameTime = 0;
-		}
+		float time = animator.GetCurrentAnimatorStateInfo (0).normalizedTime;
+		time -= (int)time;
+		SetAnimationPercentage (time);
 	}
 
 	public void UpdateRotation ()
@@ -118,7 +111,9 @@ public class Impostor : MonoBehaviour
 
 	public void SetAnimationPercentage (float percent)
 	{
-		SetFrame (Mathf.RoundToInt (percent * numberOfFrames));
+		int index = Mathf.RoundToInt (percent * numberOfFrames);
+		index = (index == numberOfFrames) ? 0 : index;
+		SetFrame (index);
 	}
 
 	private void SetUVs ()
