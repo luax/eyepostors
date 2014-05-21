@@ -1409,7 +1409,7 @@ Transform:
   m_GameObject: {fileID: 100000}
   m_LocalRotation: {x: 0, y: 1, z: 0, w: -1.62920685e-07}
   m_LocalPosition: {x: 0, y: -.100000024, z: 0}
-  m_LocalScale: {x: 2, y: 2, z: 1}
+  m_LocalScale: {x: 2.20000005, y: 2.20000005, z: 2}
   m_Children: []
   m_Father: {fileID: 400002}
 --- !u!4 &400002
@@ -2577,7 +2577,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100002}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 990a6f5d78133d24d92a007824787b0e, type: 3}
   m_Name: 
@@ -2585,8 +2585,9 @@ MonoBehaviour:
   option: 0
   highLimit: .200000003
   standardLimit: .5
-  high: {fileID: 0}
-  medium: {fileID: 0}
+  maxDistance: 10
+  high: {fileID: 4300000, guid: e07c802f30a87f6489daef871c57df79, type: 3}
+  medium: {fileID: 4300000, guid: e07c802f30a87f6489daef871c57df79, type: 3}
   impostor: {fileID: 100000}
   characterMesh: {fileID: 100186}
 --- !u!137 &13700000
