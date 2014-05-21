@@ -1350,22 +1350,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!1 &100180
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 4
-  m_Component:
-  - 4: {fileID: 400164}
-  - 137: {fileID: 13700000}
-  m_Layer: 0
-  m_Name: CarlMidGeo
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
 --- !u!1 &100182
 GameObject:
   m_ObjectHideFlags: 0
@@ -1375,6 +1359,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 400150}
   - 95: {fileID: 9500000}
+  - 137: {fileID: 13700002}
   m_Layer: 0
   m_Name: CharacterMesh
   m_TagString: Untagged
@@ -2294,10 +2279,9 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100182}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 15.9342976, y: 1.93224907, z: 5.26844025}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 400164}
   - {fileID: 400078}
   m_Father: {fileID: 0}
 --- !u!4 &400152
@@ -2371,17 +2355,6 @@ Transform:
   m_Children:
   - {fileID: 400112}
   m_Father: {fileID: 400034}
---- !u!4 &400164
-Transform:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100180}
-  m_LocalRotation: {x: 2.18556941e-08, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: .00999999978, y: .00999999978, z: .00999999978}
-  m_Children: []
-  m_Father: {fileID: 400150}
 --- !u!4 &400166
 Transform:
   m_ObjectHideFlags: 1
@@ -2499,12 +2472,12 @@ Animator:
   m_ApplyRootMotion: 1
   m_AnimatePhysics: 0
   m_HasTransformHierarchy: 1
---- !u!137 &13700000
+--- !u!137 &13700002
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100180}
+  m_GameObject: {fileID: 100182}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -2605,7 +2578,7 @@ SkinnedMeshRenderer:
   m_RootBone: {fileID: 400078}
   m_AABB:
     m_Center: {x: -3.81469727e-06, y: -6.6478653, z: 2.04098701}
-    m_Extent: {x: 95.9051971, y: 89.7321014, z: 17.9685783}
+    m_Extent: {x: 50, y: 89.7321014, z: 17.9685783}
   m_DirtyAABB: 0
 --- !u!1001 &100100000
 Prefab:

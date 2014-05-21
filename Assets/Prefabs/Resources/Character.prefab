@@ -1384,22 +1384,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!1 &100184
-GameObject:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 4
-  m_Component:
-  - 4: {fileID: 400168}
-  - 137: {fileID: 13700000}
-  m_Layer: 0
-  m_Name: CarlMidGeo
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
 --- !u!1 &100186
 GameObject:
   m_ObjectHideFlags: 0
@@ -1409,6 +1393,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 400154}
   - 95: {fileID: 9500000}
+  - 137: {fileID: 13700000}
   m_Layer: 0
   m_Name: CharacterMesh
   m_TagString: Untagged
@@ -2355,7 +2340,6 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 400168}
   - {fileID: 400082}
   m_Father: {fileID: 400002}
 --- !u!4 &400156
@@ -2429,17 +2413,6 @@ Transform:
   m_Children:
   - {fileID: 400116}
   m_Father: {fileID: 400038}
---- !u!4 &400168
-Transform:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100184}
-  m_LocalRotation: {x: 2.18556941e-08, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: .00999999978, y: .00999999978, z: .00999999978}
-  m_Children: []
-  m_Father: {fileID: 400154}
 --- !u!4 &400170
 Transform:
   m_ObjectHideFlags: 1
@@ -2595,7 +2568,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02744a539bf292e488a87206c28709b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  parent: {fileID: 0}
   FPS: 0
   numberOfFrames: 15
   numberOfAngles: 15
@@ -2617,7 +2589,7 @@ SkinnedMeshRenderer:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100184}
+  m_GameObject: {fileID: 100186}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -2717,8 +2689,8 @@ SkinnedMeshRenderer:
   m_BlendShapeWeights: []
   m_RootBone: {fileID: 400082}
   m_AABB:
-    m_Center: {x: -3.81469727e-06, y: -6.6478653, z: 2.04098701}
-    m_Extent: {x: 95.9051971, y: 89.7321014, z: 17.9685783}
+    m_Center: {x: -3.81469181e-06, y: -6.6478653, z: 2.04098701}
+    m_Extent: {x: 50, y: 89.7321014, z: 17.9685783}
   m_DirtyAABB: 0
 --- !u!1001 &100100000
 Prefab:
