@@ -1,11 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Imposter : MonoBehaviour {
+public class Imposter : MonoBehaviour
+{
 	public GameObject parent;
 	public float FPS;
 	public int numberOfFrames = 15;
 	public int numberOfAngles = 8;
+	private Transform parentTransform;
 	private Texture[] textures;
 	private Texture[] normalMaps;
 	private float frameTime;
@@ -18,27 +20,32 @@ public class Imposter : MonoBehaviour {
 	private const int LEFT = 1;
 
 	// Use this for initialization
-	void Start () {
+	void Start ()
+	{
 		SetUVs ();
 		GetTextures ();
 		cameraTransform = Camera.main.transform;
+		parentTransform = parent.transform;
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	void Update ()
+	{
 		UpdateRotation ();
 		UpdateAnimation ();
 		LookAtCamera ();
 	}
 
-	private void LookAtCamera () {
+	private void LookAtCamera ()
+	{
 		Vector3 cPos = cameraTransform.position;
 		Vector3 tPos = transform.position;
-		transform.LookAt (new Vector3 (cPos.x, cPos.y, cPos.z));
+		transform.LookAt (new Vector3 (cPos.x, tPos.y, cPos.z));
 		transform.Rotate (new Vector3 (0, 180f, 0));
 	}
 
-	public void UpdateAnimation () {
+	public void UpdateAnimation ()
+	{
 		frameTime += Time.deltaTime;
 		if (frameTime > (1f / FPS)) {
 			frame++;
@@ -50,9 +57,10 @@ public class Imposter : MonoBehaviour {
 		}
 	}
 
-	public void UpdateRotation () {
-		Vector3 parentForward = parent.transform.forward;
-		Vector3 cameraToObject = parent.transform.position - cameraTransform.position;
+	public void UpdateRotation ()
+	{
+		Vector3 parentForward = parentTransform.forward;
+		Vector3 cameraToObject = parentTransform.position - cameraTransform.position;
 		cameraToObject.y = parentForward.y = 0;
 		float angle = 180f - Vector3.Angle (cameraToObject, parentForward);
 		int index = Mathf.RoundToInt ((angle / 180f) * (numberOfAngles - 1));
@@ -76,7 +84,8 @@ public class Imposter : MonoBehaviour {
 
 	}
 
-	public void FlipUVs () {
+	public void FlipUVs ()
+	{
 		int n = quad.uv.Length;
 		Vector2[] uvs = new Vector2[n];
 		for (int i = 0; i < n; i++) {
@@ -85,12 +94,14 @@ public class Imposter : MonoBehaviour {
 		quad.uv = uvs;
 	}
 
-	public int GetFrame () {
+	public int GetFrame ()
+	{
 		Vector2 offset = renderer.material.GetTextureOffset ("_MainTex");
 		return (int)((offset.x / 0.25f) + (4f * offset.y / -0.25f));
 	}
 
-	public void SetFrame (int frameNumber) {
+	public void SetFrame (int frameNumber)
+	{
 		float x = (0.25f * (frameNumber % 4));
 		float y = (-0.25f * (frameNumber / 4));
 		Vector2 offset = new Vector2 (x, y);
@@ -98,15 +109,18 @@ public class Imposter : MonoBehaviour {
 		renderer.material.SetTextureOffset ("_BumpMap", offset);
 	}
 
-	public float GetAnimationPercentage () {
+	public float GetAnimationPercentage ()
+	{
 		return ((float)frame / (float)numberOfFrames);
 	}
 
-	public void SetAnimationPercentage (float percent) {
+	public void SetAnimationPercentage (float percent)
+	{
 		SetFrame (Mathf.RoundToInt (percent * numberOfFrames));
 	}
 
-	private void SetUVs () {
+	private void SetUVs ()
+	{
 		quad = gameObject.GetComponent<MeshFilter> ().mesh;
 		quad.uv = new Vector2[] {
 			new Vector2 (0f, 0.75f),
@@ -116,7 +130,8 @@ public class Imposter : MonoBehaviour {
 		};
 	}
 
-	private void GetTextures () {
+	private void GetTextures ()
+	{
 		textures = new Texture[numberOfAngles];
 		normalMaps = new Texture[numberOfAngles];
 		for (int i = 0; i < numberOfAngles; i++) {
