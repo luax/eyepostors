@@ -9,6 +9,7 @@ public class CaptureCharacter : MonoBehaviour
 	public int textureSize = 1024;
 	public int numberOfAngles = 15;
 	public int numberOfFrames = 15;
+	public bool saveTextures = true;
 
 	public bool CaptureFinished { get; set; }
 
@@ -18,6 +19,8 @@ public class CaptureCharacter : MonoBehaviour
     
 	private Color normalBGColor;
 	private int frameSize;
+
+	private SkinnedMeshRenderer myRenderer;
 
 	private int frame = 0;
 	private int index = 0;
@@ -31,7 +34,9 @@ public class CaptureCharacter : MonoBehaviour
 	private float startTime;
 
 	void Start ()
-	{   
+	{   	
+		myRenderer = GetComponent<SkinnedMeshRenderer> ();
+		
 		animator = gameObject.GetComponent<Animator> ();
 		animator.speed = 0f;
 		myTransform = gameObject.transform;
@@ -45,7 +50,7 @@ public class CaptureCharacter : MonoBehaviour
 		normalBGColor = new Color (127f, 127f, 254f, 255f) / 255f;
 		Camera.main.backgroundColor = Color.clear;
 		state = TEXTURE;
-		renderer.material.mainTexture = charTexture;
+		myRenderer.material.mainTexture = charTexture;
 		StartCoroutine (CaptureFrames ());
 	}
     
@@ -60,17 +65,24 @@ public class CaptureCharacter : MonoBehaviour
 					UpdateAnimation ();
 					frame++;
 				}
-				state = (state + 1) % 2;
-				renderer.material.mainTexture = (state == TEXTURE) ? charTexture : normalMap;
-				Camera.main.backgroundColor = (state == TEXTURE) ? Color.clear : normalBGColor;
+				SwitchState ();
 			}
 			RotateObject ();
-			SaveToPNG ("texture" + index + ".png", Textures [index]);
-			SaveToPNG ("normal" + index + ".png", NormalMaps [index]);
+			if (saveTextures) {
+				SaveToPNG ("texture" + index + ".png", Textures [index]);
+				SaveToPNG ("normal" + index + ".png", NormalMaps [index]);
+			}
 			frame = 0;
 		}
 		CaptureFinished = true;
 		Debug.Log ("Time to generate imposter: " + (Time.time - startTime) + " seconds");
+	}
+	
+	private void SwitchState ()
+	{
+		state = (state + 1) % 2;
+		myRenderer.material.mainTexture = (state == TEXTURE) ? charTexture : normalMap;
+		Camera.main.backgroundColor = (state == TEXTURE) ? Color.clear : normalBGColor;
 	}
     
 	// Return part of the screen in a texture.
