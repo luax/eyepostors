@@ -6,10 +6,9 @@ public class Imposter : MonoBehaviour
 	public GameObject parent;
 	public float FPS;
 	public int numberOfFrames = 15;
-	public int numberOfAngles = 8;
+	public int numberOfAngles = 15;
+
 	private Transform parentTransform;
-	private Texture[] textures;
-	private Texture[] normalMaps;
 	private float frameTime;
 	private int frame;
 	private Mesh quad;
@@ -19,16 +18,14 @@ public class Imposter : MonoBehaviour
 	private const int RIGHT = 0;
 	private const int LEFT = 1;
 
-	// Use this for initialization
 	void Start ()
 	{
 		SetUVs ();
-		GetTextures ();
+		SetMaterial(0);
 		cameraTransform = Camera.main.transform;
 		parentTransform = parent.transform;
 	}
 	
-	// Update is called once per frame
 	void Update ()
 	{
 		UpdateRotation ();
@@ -66,8 +63,7 @@ public class Imposter : MonoBehaviour
 		int index = Mathf.RoundToInt ((angle / 180f) * (numberOfAngles - 1));
 		if (index != currentAngleIndex) {
 			// Only update when we need to
-			renderer.material.SetTexture ("_MainTex", textures [index]);
-			renderer.material.SetTexture ("_BumpMap", normalMaps [index]);
+            SetMaterial(index);
 			currentAngleIndex = index;
 			Vector3 parentRight = parent.transform.right;
 			parentRight.y = 0;
@@ -130,15 +126,8 @@ public class Imposter : MonoBehaviour
 		};
 	}
 
-	private void GetTextures ()
-	{
-		textures = new Texture[numberOfAngles];
-		normalMaps = new Texture[numberOfAngles];
-		for (int i = 0; i < numberOfAngles; i++) {
-			textures [i] = (Texture)Resources.Load ("GeneratedTextures/texture" + i);
-			normalMaps [i] = (Texture)Resources.Load ("GeneratedTextures/normal" + i);
-		}
-		renderer.material.SetTexture ("_MainTex", textures [0]);
-		renderer.material.SetTexture ("_BumpMap", normalMaps [0]);
-	}
+    private void SetMaterial(int index)
+    {
+        renderer.material = Materials.Instance.GetMaterial(index);
+    }
 }

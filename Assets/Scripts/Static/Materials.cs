@@ -3,7 +3,7 @@ using System.Collections;
 
 public class Materials : Singleton<Materials>
 {
-    public int numberOfAngles = 8;
+    public int numberOfAngles = 15;
     private Material[] materials;
 
     void Awake()
