@@ -27,7 +27,6 @@ GameObject:
   m_Component:
   - 4: {fileID: 400002}
   - 114: {fileID: 11400002}
-  - 95: {fileID: 9500000}
   m_Layer: 0
   m_Name: Character
   m_TagString: Untagged
@@ -1394,6 +1393,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 400154}
   - 137: {fileID: 13700000}
+  - 95: {fileID: 9500000}
   m_Layer: 0
   m_Name: CharacterMesh
   m_TagString: Untagged
@@ -2550,7 +2550,7 @@ Animator:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100002}
+  m_GameObject: {fileID: 100186}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: e07c802f30a87f6489daef871c57df79, type: 3}
   m_Controller: {fileID: 9100000, guid: d5b48a85da2df4c4faa379533b34a6ea, type: 2}
@@ -2571,6 +2571,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   numberOfFrames: 15
   numberOfAngles: 15
+  normalizedTime: 0
 --- !u!114 &11400002
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2583,9 +2584,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   option: 0
+  gazePointType: 1
   highLimit: 50
   standardLimit: 180
-  maxDistance: 10
   high: {fileID: 4300000, guid: e07c802f30a87f6489daef871c57df79, type: 3}
   medium: {fileID: 4300000, guid: e07c802f30a87f6489daef871c57df79, type: 3}
   impostor: {fileID: 100000}
