@@ -10,9 +10,9 @@ public enum TriggerOption
 public class CharacterGazeLOD : MonoBehaviour
 {
     public TriggerOption option;
+    public EyeXGazePointType gazePointType = EyeXGazePointType.GazeLightlyFiltered;
     public float highLimit = 50f; // TODO
     public float standardLimit = 180f; // TODO
-    public float maxDistance = 10f;
     public Mesh high;
     public Mesh medium;
     public GameObject impostor;
@@ -43,24 +43,15 @@ public class CharacterGazeLOD : MonoBehaviour
 
     public void Update()
     {
-        Vector3 cPos = cameraTransform.position;
-        Vector3 tPos = myTransform.position;
-        cPos.y = tPos.y = 0;
-        float distance = Vector3.Distance(cPos, tPos);
-
-        if (distance > maxDistance)
-        {
-            SetLOD(LOD.Low);
-            return;
-        }
+        float distance = float.MaxValue;
 
         if (impostor.activeSelf)
         {
-            distance = GazeDistance.Instance.CalculateDistance(impostor, option);
+            distance = GazeDistance.Instance.CalculateDistance(ref impostor);
         }
         else
         {
-            distance = GazeDistance.Instance.CalculateDistance(characterMesh, option);
+            distance = GazeDistance.Instance.CalculateDistance(ref characterMesh);
         }
 
         SetLOD(GetLOD(distance));
