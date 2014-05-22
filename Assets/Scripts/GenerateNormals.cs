@@ -94,7 +94,7 @@ public class GenerateNormals : MonoBehaviour
 			DrawTriangle (new Pixel[]{v0,v1,v2});
 		}
 		normalMap.SetPixels (colors);
-		normalMap.Apply ();
+		normalMap.Apply (false);
 		return normalMap;
 	}
 	
