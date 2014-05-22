@@ -9,6 +9,8 @@ public enum TriggerOption
 
 public class CharacterGazeLOD : MonoBehaviour
 {
+    public float NormalizedTime { get; set; }
+
     public TriggerOption option;
     public EyeXGazePointType gazePointType = EyeXGazePointType.GazeLightlyFiltered;
     public float highLimit = 50f; // TODO
@@ -45,7 +47,7 @@ public class CharacterGazeLOD : MonoBehaviour
     public void Update()
     {
         float distance = float.MaxValue;
-
+        NormalizedTime += Time.deltaTime;
         if (impostor.activeSelf)
         {
             distance = GazeDistance.Instance.CalculateDistance(impostor);
@@ -126,7 +128,7 @@ public class CharacterGazeLOD : MonoBehaviour
         if (active && mesh)
         {
             characterRenderer.sharedMesh = mesh;
-            characterMesh.GetComponent<Animator>().ForceStateNormalizedTime(impostorScript.normalizedTime);
+            characterMesh.GetComponent<Animator>().ForceStateNormalizedTime(NormalizedTime);
         }
     }
 }
