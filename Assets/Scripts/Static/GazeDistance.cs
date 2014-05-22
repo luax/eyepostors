@@ -1,11 +1,13 @@
-﻿using UnityEngine;
+﻿#define DEBUG
+#undef DEBUG
+
+using UnityEngine;
 using System.Collections;
 
 public class GazeDistance : Singleton<GazeDistance>
 {
-    //public const EyeXGazePointType gazePointType = EyeXGazePointType.GazeLightlyFiltered;
-    //public const TriggerOption triggerOption = TriggerOption.Mouse;
 
+    
     private EyeXGazePointType gazePointType;
     private TriggerOption triggerOption;
     private EyeXGazePointProvider gazePointProvider;
@@ -17,6 +19,8 @@ public class GazeDistance : Singleton<GazeDistance>
     private Vector3 cPos;
     private Vector3 gazePoint3D;
     private Vector3 gazePoint2D;
+
+    private GameObject latestObject;
 
     public void Awake()
     {
@@ -69,11 +73,16 @@ public class GazeDistance : Singleton<GazeDistance>
 
     public float CalculateDistance(GameObject gameObject)
     {
+        bool invalidGaze = triggerOption == TriggerOption.Gaze && (!gazePoint.IsValid || !gazePoint.IsWithinScreenBounds);
 
-        if (triggerOption == TriggerOption.Gaze && (!gazePoint.IsValid || !gazePoint.IsWithinScreenBounds))
+        if (!gameObject.renderer.isVisible || invalidGaze)
         {
             return float.MaxValue;
         }
+
+#if DEBUG
+        latestObject = gameObject;
+#endif
 
         Vector3 tPos = gameObject.transform.position;
         cPos.y = tPos.y = 0;
@@ -88,8 +97,8 @@ public class GazeDistance : Singleton<GazeDistance>
             return float.MaxValue;
         }
 
-        //Rect rect = BoundsToScreenRect(gameObject.renderer.bounds);
-        Rect rect = ProjectedRect.GetProjectedRect(gameObject, Camera.main).rect;
+        Rect rect = BoundsToScreenRect(gameObject.renderer.bounds);
+        //Rect rect = ProjectedRect.GetProjectedRect(gameObject, Camera.main).rect;
         return DistanceToRectangle(rect, gazePoint2D);
     }
 
@@ -110,15 +119,16 @@ public class GazeDistance : Singleton<GazeDistance>
         return Mathf.Sqrt(dx * dx + dy * dy);
     }
 
-    //public void OnGUI()
-    //{
-    //    if (latestObject.renderer != null)
-    //    {
-    //        //GUI.Box(ProjectedRect.GetProjectedRect(latestObject, Camera.main).rect, "Distance from trigger option " + CalculateDistance(latestObject));
-
-    //        GUI.Box(BoundsToScreenRect(latestObject.renderer.bounds), "Distance from trigger option " + CalculateDistance(latestObject));
-    //    }
-    //}
+#if DEBUG
+    public void OnGUI()
+    {
+        if (latestObject.renderer != null && latestObject.renderer.isVisible)
+        {
+            //GUI.Box(ProjectedRect.GetProjectedRect(latestObject, Camera.main).rect, "Distance from trigger option " + CalculateDistance(latestObject));
+            GUI.Box(BoundsToScreenRect(latestObject.renderer.bounds), "Distance from trigger option " + CalculateDistance(latestObject));
+        }
+    }
+#endif
 
     // Tobii version is probably better than this
     public Rect BoundsToScreenRect(Bounds bounds)
