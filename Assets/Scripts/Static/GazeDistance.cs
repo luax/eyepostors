@@ -7,7 +7,7 @@ using System.Collections;
 public class GazeDistance : Singleton<GazeDistance>
 {
 
-    
+
     private EyeXGazePointType gazePointType;
     private TriggerOption triggerOption;
     private EyeXGazePointProvider gazePointProvider;
@@ -130,8 +130,43 @@ public class GazeDistance : Singleton<GazeDistance>
     }
 #endif
 
-    // Tobii version is probably better than this
-    public Rect BoundsToScreenRect(Bounds bounds)
+    public Rect BoundsToScreenRect(Bounds b)
+    {
+        Vector3[] vertices = new Vector3[8];
+        float h = Screen.height;
+        Vector3 c = b.center;
+        Vector3 e = b.extents;
+
+        // Counter clockwise starting at top most left vertex
+        vertices[0] = c + e;
+        vertices[1] = new Vector3(c.x + e.x, c.y - e.y, c.z + e.z);
+        vertices[2] = new Vector3(c.x - e.x, c.y - e.y, c.z + e.z);
+        vertices[3] = new Vector3(c.x - e.x, c.y + e.y, c.z + e.z);
+        vertices[4] = new Vector3(c.x + e.x, c.y + e.y, c.z - e.z);
+        vertices[5] = new Vector3(c.x + e.x, c.y - e.y, c.z - e.z);
+        vertices[6] = new Vector3(c.x - e.x, c.y - e.y, c.z - e.z);
+        vertices[7] = new Vector3(c.x - e.x, c.y + e.y, c.z - e.z);
+
+        Vector3 min = ConvertToScreenSpace(vertices[0]);
+        Vector3 max = ConvertToScreenSpace(vertices[0]);
+        for (int i = 1; i < vertices.Length; i++)
+        {
+            vertices[i] = ConvertToScreenSpace(vertices[i]);
+            min = Vector3.Min(min, vertices[i]);
+            max = Vector3.Max(max, vertices[i]);
+        }
+
+        return new Rect(min.x, min.y, max.x - min.x, max.y - min.y);
+    }
+
+    private Vector3 ConvertToScreenSpace(Vector3 p)
+    {
+        Vector3 r = Camera.main.WorldToScreenPoint(p);
+        r.y = Screen.height - r.y;
+        return r;
+    }
+
+    public Rect BoundsToScreenRect2(Bounds bounds)
     {
         Vector3 origin = Camera.main.WorldToScreenPoint(new Vector3(bounds.min.x, bounds.max.y, bounds.max.z));
         Vector3 extent = Camera.main.WorldToScreenPoint(new Vector3(bounds.max.x, bounds.min.y, bounds.min.z));
