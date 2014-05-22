@@ -11,14 +11,8 @@ public class GazeDistance : Singleton<GazeDistance>
     private EyeXGazePointProvider gazePointProvider;
     private EyeXGazePoint gazePoint;
 
-    // For debugging
-    public const bool DEBUG = true;
-    private Material red;
-    private Material blue;
-    private GameObject latestObject;
-
-    public const float maxDistance = 10f;
-    public const float maxGUIDistance = 1000f; // TODO
+    public const float maxDistance = 20f;
+    public const float minDistance = 5f;
 
     private Vector3 cPos;
     private Vector3 gazePoint3D;
@@ -31,11 +25,6 @@ public class GazeDistance : Singleton<GazeDistance>
 
     public void Start()
     {
-        if (DEBUG)
-        {
-            latestObject = gameObject;
-        }
-
         CharacterGazeLOD gazeLOD = GameObject.FindObjectOfType<CharacterGazeLOD>();
         if (gazeLOD != null)
         {
@@ -48,7 +37,6 @@ public class GazeDistance : Singleton<GazeDistance>
             gazePointType = EyeXGazePointType.GazeLightlyFiltered;
             Debug.LogError("No CharacterGazeLOD script was found and could not get any trigger or gaze point option");
         }
-
     }
 
     public void OnEnable()
@@ -79,46 +67,40 @@ public class GazeDistance : Singleton<GazeDistance>
         cPos = Camera.main.transform.position;
     }
 
-    public float CalculateDistance(ref GameObject gameObject)
+    public float CalculateDistance(GameObject gameObject)
     {
-        if (DEBUG)
-        {
-            latestObject = gameObject;
-        }
 
-        if (triggerOption == TriggerOption.
-        Gaze && (!gazePoint.IsValid || !gazePoint.IsWithinScreenBounds))
+        if (triggerOption == TriggerOption.Gaze && (!gazePoint.IsValid || !gazePoint.IsWithinScreenBounds))
         {
             return float.MaxValue;
         }
 
-        if (MaxDistance(ref gameObject) || MaxGUIDistance(ref gameObject))
+        Vector3 tPos = gameObject.transform.position;
+        cPos.y = tPos.y = 0;
+
+        if (MuchClose(gameObject, ref tPos))
+        {
+            return 0f;
+        }
+
+        if (MaxDistance(gameObject, ref tPos))
         {
             return float.MaxValue;
         }
 
-        //Vector2 gaze = new Vector2(gazePoint.Screen.x / Screen.width, gazePoint.Screen.y / Screen.height);
-        //Vector2 pos = new Vector2(position.x, position.y / Screen.height);
-
+        //Rect rect = BoundsToScreenRect(gameObject.renderer.bounds);
         Rect rect = ProjectedRect.GetProjectedRect(gameObject, Camera.main).rect;
-
         return DistanceToRectangle(rect, gazePoint2D);
     }
 
-    private bool MaxDistance(ref GameObject gameObject)
+    private bool MuchClose(GameObject gameObject, ref Vector3 objectPosition)
     {
-        Vector3 tPos = gameObject.transform.position;
-        cPos.y = tPos.y = 0;
-        return Vector3.Distance(cPos, tPos) > maxDistance;
+        return Vector3.Distance(cPos, objectPosition) < minDistance;
     }
 
-
-    private bool MaxGUIDistance(ref GameObject gameObject)
+    private bool MaxDistance(GameObject gameObject, ref Vector3 objectPosition)
     {
-        Vector3 position = Camera.main.WorldToScreenPoint(gameObject.transform.position);
-        float test = Vector3.Distance(position, gazePoint2D); // GUI
-        // Debug.Log("GUI dist: " + test);
-        return test > maxGUIDistance;
+        return Vector3.Distance(cPos, objectPosition) > maxDistance;
     }
 
     private float DistanceToRectangle(Rect rect, Vector2 gaze)
@@ -128,19 +110,22 @@ public class GazeDistance : Singleton<GazeDistance>
         return Mathf.Sqrt(dx * dx + dy * dy);
     }
 
-    public void OnGUI()
-    {
-        if (DEBUG && latestObject.renderer != null)
-        {
-            GUI.Box(ProjectedRect.GetProjectedRect(latestObject, Camera.main).rect, "Distance from trigger option " + CalculateDistance(ref latestObject));
-        }
-    }
+    //public void OnGUI()
+    //{
+    //    if (latestObject.renderer != null)
+    //    {
+    //        //GUI.Box(ProjectedRect.GetProjectedRect(latestObject, Camera.main).rect, "Distance from trigger option " + CalculateDistance(latestObject));
+
+    //        GUI.Box(BoundsToScreenRect(latestObject.renderer.bounds), "Distance from trigger option " + CalculateDistance(latestObject));
+    //    }
+    //}
 
     // Tobii version is probably better than this
     public Rect BoundsToScreenRect(Bounds bounds)
     {
         Vector3 origin = Camera.main.WorldToScreenPoint(new Vector3(bounds.min.x, bounds.max.y, bounds.max.z));
         Vector3 extent = Camera.main.WorldToScreenPoint(new Vector3(bounds.max.x, bounds.min.y, bounds.min.z));
+
         return new Rect(origin.x, Screen.height - origin.y, extent.x - origin.x, origin.y - extent.y);
     }
 }

@@ -25,7 +25,6 @@ public class CharacterGazeLOD : MonoBehaviour
     private Impostor impostorScript;
     private float coolDown;
 
-
     private enum LOD
     {
         High,
@@ -49,10 +48,11 @@ public class CharacterGazeLOD : MonoBehaviour
 
         if (impostor.activeSelf)
         {
-            distance = GazeDistance.Instance.CalculateDistance(ref impostor);
-        } else
+            distance = GazeDistance.Instance.CalculateDistance(impostor);
+        }
+        else
         {
-            distance = GazeDistance.Instance.CalculateDistance(ref characterMesh);
+            distance = GazeDistance.Instance.CalculateDistance(characterMesh);
         }
 
         if (!CoolDown())
@@ -66,10 +66,9 @@ public class CharacterGazeLOD : MonoBehaviour
         if (currentLOD == lod)
         {
             return;
-        } else
-        {
-            SetCoolDown();
         }
+
+        SetCoolDown();
 
         switch (lod)
         {
