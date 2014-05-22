@@ -2583,8 +2583,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   option: 0
-  highLimit: .200000003
-  standardLimit: .5
+  highLimit: 50
+  standardLimit: 180
   maxDistance: 10
   high: {fileID: 4300000, guid: e07c802f30a87f6489daef871c57df79, type: 3}
   medium: {fileID: 4300000, guid: e07c802f30a87f6489daef871c57df79, type: 3}
