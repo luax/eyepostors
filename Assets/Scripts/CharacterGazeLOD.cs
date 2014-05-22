@@ -1,14 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public enum TriggerOption
-{
+public enum TriggerOption {
     Mouse,
     Gaze
 }
 
-public class CharacterGazeLOD : MonoBehaviour
-{
+public class CharacterGazeLOD : MonoBehaviour {
     public float NormalizedTime { get; set; }
 
     public TriggerOption option;
@@ -26,109 +24,102 @@ public class CharacterGazeLOD : MonoBehaviour
     private LOD currentLOD;
     private Impostor impostorScript;
     private float coolDown;
+    private Animator animator;
 
-    private enum LOD
-    {
+    private enum LOD {
         High,
         Standard,
         Low
     }
 
-    public void Awake()
-    {
+    public void Awake () {
         myTransform = transform;
         cameraTransform = Camera.main.transform;
-        characterRenderer = characterMesh.GetComponent<SkinnedMeshRenderer>();
-        impostorScript = impostor.GetComponent<Impostor>();
-        characterMesh.SetActive(false);
-        impostor.SetActive(true);
+        characterRenderer = characterMesh.GetComponent<SkinnedMeshRenderer> ();
+        impostorScript = impostor.GetComponent<Impostor> ();
+        animator = characterMesh.GetComponent<Animator> ();
+        characterMesh.SetActive (false);
+        impostor.SetActive (true);
     }
 
-    public void Update()
-    {
+    public void Update () {
         float distance = float.MaxValue;
         NormalizedTime += Time.deltaTime;
-        if (impostor.activeSelf)
-        {
-            distance = GazeDistance.Instance.CalculateDistance(impostor);
-        }
-        else
-        {
-            distance = GazeDistance.Instance.CalculateDistance(characterMesh);
+        NormalizedTime = NormalizedTime % 1.0f;
+
+        if (impostor.activeSelf) {
+            distance = GazeDistance.Instance.CalculateDistance (impostor);
+        } else {
+            distance = GazeDistance.Instance.CalculateDistance (characterMesh);
         }
 
-        if (!CoolDown())
-        {
-            SetLOD(GetLOD(distance));
+        if (!CoolDown ()) {
+            SetLOD (GetLOD (distance));
         }
     }
 
-    private void SetLOD(LOD lod)
-    {
-        if (currentLOD == lod)
-        {
+    private void SetLOD (LOD lod) {
+        if (currentLOD == lod) {
             return;
         }
 
-        SetCoolDown();
+        SetCoolDown ();
 
-        switch (lod)
-        {
-            case LOD.High:
-                SetImpostor(false);
-                SetCharacterMesh(true, high);
-                break;
-            case LOD.Standard:
-                SetImpostor(false);
-                SetCharacterMesh(true, medium);
-                break;
-            case LOD.Low:
-                SetImpostor(true);
-                SetCharacterMesh(false);
-                break;
+        switch (lod) {
+        case LOD.High:
+            SetImpostor (false);
+            SetCharacterMesh (true, high);
+            break;
+        case LOD.Standard:
+            SetImpostor (false);
+            SetCharacterMesh (true, medium);
+            break;
+        case LOD.Low:
+            SetCharacterMesh (false);
+            SetImpostor (true);
+            break;
         }
 
         currentLOD = lod;
     }
 
-    private void SetCoolDown()
-    {
+    private void SetCoolDown () {
         coolDown = coolDownTime;
     }
 
-    private bool CoolDown()
-    {
+    private bool CoolDown () {
         return (coolDown -= Time.deltaTime) > 0;
     }
 
-    private LOD GetLOD(float distance)
-    {
-        if (distance < highLimit)
-        {
+    private LOD GetLOD (float distance) {
+        if (distance < highLimit) {
             return LOD.High;
-        } else if (distance < standardLimit)
-        {
+        } else if (distance < standardLimit) {
             return LOD.Standard;
         }
         return LOD.Low;
     }
 
-    private void SetImpostor(bool active)
-    {
-        impostor.SetActive(active);
-        if (active)
-        {
-            impostorScript.Update();
+    private void SetImpostor (bool activate) {
+        impostor.SetActive (activate);
+        if (activate) {
+            impostorScript.Update ();
         }
     }
 
-    private void SetCharacterMesh(bool active, Mesh mesh = null)
-    {
-        characterMesh.SetActive(active);
-        if (active && mesh)
-        {
+    private void SetCharacterMesh (bool activate, Mesh mesh = null) {
+        if (!activate) {
+            NormalizedTime = animator.GetCurrentAnimatorStateInfo (0).normalizedTime - 
+                Mathf.Floor (animator.GetCurrentAnimatorStateInfo (0).normalizedTime);
+        }
+        characterMesh.SetActive (activate);
+        if (activate && mesh) {   
+            //animator.speed = 0;
             characterRenderer.sharedMesh = mesh;
-            characterMesh.GetComponent<Animator>().ForceStateNormalizedTime(NormalizedTime);
+            //float normalizedTimeFrac = NormalizedTime - Mathf.Floor (NormalizedTime);
+            animator.ForceStateNormalizedTime (NormalizedTime);
+            animator.Play ("WalkForward", 0, NormalizedTime);
+            animator.CrossFade ("WalkForward", 0f, 0, NormalizedTime);
         }
     }
 }
