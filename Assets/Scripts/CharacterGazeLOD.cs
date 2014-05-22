@@ -18,13 +18,11 @@ public class CharacterGazeLOD : MonoBehaviour
     public GameObject impostor;
     public GameObject characterMesh;
     public float coolDownTime = 0.5f;
-
     private Transform myTransform;
     private Transform cameraTransform;
     private SkinnedMeshRenderer characterRenderer;
     private LOD currentLOD;
     private Impostor impostorScript;
-
     private float coolDown;
 
 
@@ -52,8 +50,7 @@ public class CharacterGazeLOD : MonoBehaviour
         if (impostor.activeSelf)
         {
             distance = GazeDistance.Instance.CalculateDistance(ref impostor);
-        }
-        else
+        } else
         {
             distance = GazeDistance.Instance.CalculateDistance(ref characterMesh);
         }
@@ -69,8 +66,7 @@ public class CharacterGazeLOD : MonoBehaviour
         if (currentLOD == lod)
         {
             return;
-        }
-        else
+        } else
         {
             SetCoolDown();
         }
@@ -109,14 +105,12 @@ public class CharacterGazeLOD : MonoBehaviour
         if (distance < highLimit)
         {
             return LOD.High;
-        }
-        else if (distance < standardLimit)
+        } else if (distance < standardLimit)
         {
             return LOD.Standard;
         }
         return LOD.Low;
     }
-
 
     private void SetImpostor(bool active)
     {
@@ -133,6 +127,7 @@ public class CharacterGazeLOD : MonoBehaviour
         if (active && mesh)
         {
             characterRenderer.sharedMesh = mesh;
+            characterMesh.GetComponent<Animator>().ForceStateNormalizedTime(impostorScript.normalizedTime);
         }
     }
 }
