@@ -759,7 +759,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee0384427d4514b99af8850384301765, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  charTexture: {fileID: 2800000, guid: a07e1127dec935744bb9c3e3c27cb477, type: 3}
+  charTexture: {fileID: 2800000, guid: 4363f6c1d336a49ae9bf5d421d8a08ec, type: 3}
   textureSizeHorizontal: 1024
   numberOfAngles: 16
   numberOfFrames: 16

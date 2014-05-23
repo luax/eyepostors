@@ -3,8 +3,9 @@ using System.Collections;
 
 public class Materials : Singleton<Materials>
 {
-	public int numberOfAngles = 16;
+	public int numberOfAngles = 16	;
 	private Material[,] materials;
+	private string shader = "ShirtColor/Transparent";
 
 	void Awake ()
 	{
@@ -20,12 +21,13 @@ public class Materials : Singleton<Materials>
 	{
 		return materials [x, y];
 	}
-
+    
 	private Material MakeMaterial (int indexX, int indexY)
 	{
-		Material mat = new Material (Shader.Find ("Transparent/Cutout/Bumped Diffuse"));
+		Material mat = new Material (Shader.Find (shader));
 		mat.SetTexture ("_MainTex", (Texture)Resources.Load ("GeneratedTextures/texture" + indexX + "_" + indexY));
 		mat.SetTexture ("_BumpMap", (Texture)Resources.Load ("GeneratedTextures/normal" + indexX + "_" + indexY));
+
 		return mat;
 	}
 }

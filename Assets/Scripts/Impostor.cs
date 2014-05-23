@@ -5,8 +5,9 @@ public class Impostor : MonoBehaviour
 {
 	public int numberOfFrames = 16;
 	public int numberOfAngles = 16;
-
+	public Color shirtColor;
 	// Component references
+	
 	private Transform impostorTransform;
 	private Transform parentTransform;
 	private Transform cameraTransform;
@@ -105,7 +106,8 @@ public class Impostor : MonoBehaviour
 
 	private void SetMaterial (int frameIndex)
 	{
-		impostorRenderer.sharedMaterial = Materials.Instance.GetMaterial (0, frameIndex);
+		impostorRenderer.material = Materials.Instance.GetMaterial (0, frameIndex);
+		impostorRenderer.material.SetColor ("_ShirtColor", shirtColor);
 		SetFrame (frameIndex);
 	}
 }
