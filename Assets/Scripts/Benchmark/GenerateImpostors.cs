@@ -24,6 +24,7 @@ public class GenerateImpostors : MonoBehaviour
 				z -= offset;
 			}
 			x += offset;
+			g.transform.Rotate (new Vector3 (0, Random.Range (0f, 360f), 0));
 		}
 
 		Debug.Log ("Number of impostors: " + impostors);

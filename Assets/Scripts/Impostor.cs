@@ -3,8 +3,8 @@ using System.Collections;
 
 public class Impostor : MonoBehaviour
 {
-	public int numberOfFrames = 15;
-	public int numberOfAngles = 15;
+	public int numberOfFrames = 16;
+	public int numberOfAngles = 16;
 
 	// Component references
 	private Transform impostorTransform;
@@ -54,50 +54,31 @@ public class Impostor : MonoBehaviour
 	public void UpdateRotation ()
 	{
 		Vector3 parentForward = parentTransform.forward;
+		Vector3 parentRight = parentTransform.right;
 		Vector3 cameraToObject = parentTransform.position - cameraTransform.position;
-		cameraToObject.y = parentForward.y = 0;
+		parentRight.y = cameraToObject.y = 0;
+		
 		float angle = 180f - Vector3.Angle (cameraToObject, parentForward);
-		int index = Mathf.RoundToInt ((angle / 180f) * (numberOfAngles - 1));
-		if (index != currentAngleIndex) {
-			// Only update when we need to
+		int index = Mathf.RoundToInt ((angle / 180f) * (numberOfAngles / 2 - 1));
+		if (index != currentAngleIndex && index != numberOfAngles - currentAngleIndex) {
+			float dot = Vector3.Dot (cameraToObject, parentRight);
+			if (dot < 0f) {
+				index = numberOfAngles - index - 1;
+			}
 			SetMaterial (index);
 			currentAngleIndex = index;
-			Vector3 parentRight = parentTransform.right;
-			parentRight.y = 0;
-			float dot = Vector3.Dot (cameraToObject, parentRight);
-			if (((dot > 0f) && currentDirection == LEFT) ||
-				((dot < 0f) && currentDirection == RIGHT)) {
-				// If the dot product is positive the camera is to the right of the player
-				// and vice versa. If thats true and current direction is the other way we
-				// flip the UVs.
-				FlipUVs ();
-				currentDirection = (currentDirection + 1) % 2;
-			}
 		}
-
-	}
-
-	public void FlipUVs ()
-	{
-		int n = quad.uv.Length;
-		Vector2[] uvs = new Vector2[n];
-		for (int i = 0; i < n; i++) {
-			uvs [i] = quad.uv [(i + 2) % n];
-		}
-		quad.uv = uvs;
 	}
 
 	public void SetFrame (int frameNumber)
 	{
 		float x = (0.125f * (frameNumber % 8));
 		float y = 0.5f - (0.5f * (frameNumber / 8));
-		Vector2 offset = new Vector2 (x, y);
-		quad.uv = new Vector2[] {
+		quad.uv = new Vector2[] { 
 			new Vector2 (x, y),
-			new Vector2 (x + 0.125f, 0.5f + y),
-			new Vector2 (x + 0.125f, y),
-			new Vector2 (x, 0.5f + y)
-		};
+		 	new Vector2 (x + 0.125f, 0.5f + y),
+		 	new Vector2 (x + 0.125f, y),
+		 	new Vector2 (x, 0.5f + y)};
 	}
 
 	public float GetAnimationPercentage ()
@@ -124,7 +105,7 @@ public class Impostor : MonoBehaviour
 
 	private void SetMaterial (int frameIndex)
 	{
-		impostorRenderer.sharedMaterial = Materials.Instance.GetMaterial (frameIndex);
+		impostorRenderer.sharedMaterial = Materials.Instance.GetMaterial (0, frameIndex);
 		SetFrame (frameIndex);
 	}
 }
