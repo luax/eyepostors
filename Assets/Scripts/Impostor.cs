@@ -3,8 +3,6 @@ using System.Collections;
 
 public class Impostor : MonoBehaviour
 {
-	public int numberOfFrames = 16;
-	public int numberOfAngles = 16;
 	public Color shirtColor;
 
 	// Component references
@@ -60,11 +58,12 @@ public class Impostor : MonoBehaviour
 		parentRight.y = cameraToObject.y = 0;
 		
 		float angle = 180f - Vector3.Angle (cameraToObject, parentForward);
-		int index = Mathf.RoundToInt ((angle / 180f) * (numberOfAngles / 2 - 1));
-		if (index != currentAngleIndex && index != numberOfAngles - currentAngleIndex) {
+        int index = Mathf.RoundToInt((angle / 180f) * (Settings.numberOfAngles / 2 - 1));
+        if (index != currentAngleIndex && index != Settings.numberOfAngles - currentAngleIndex)
+        {
 			float dot = Vector3.Dot (cameraToObject, parentRight);
 			if (dot < 0f) {
-				index = numberOfAngles - index - 1;
+                index = Settings.numberOfAngles - index - 1;
 			}
 			SetMaterial (index);
 			currentAngleIndex = index;
@@ -84,13 +83,13 @@ public class Impostor : MonoBehaviour
 
 	public float GetAnimationPercentage ()
 	{
-		return ((float)frameIndex / (float)numberOfFrames);
+        return ((float)frameIndex / (float)Settings.numberOfFrames);
 	}
 
 	public void SetAnimationPercentage (float percent)
 	{
-		frameIndex = Mathf.RoundToInt (percent * numberOfFrames);
-		frameIndex = (frameIndex == numberOfFrames) ? 0 : frameIndex;
+        frameIndex = Mathf.RoundToInt(percent * Settings.numberOfFrames);
+        frameIndex = (frameIndex == Settings.numberOfFrames) ? 0 : frameIndex;
 		SetFrame (frameIndex);
 	}
 
