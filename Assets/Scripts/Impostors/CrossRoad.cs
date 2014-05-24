@@ -50,8 +50,8 @@ public class CrossRoad : MonoBehaviour
 
         public void Handle()
         {
-            if (Vector3.Distance(character.transform.position, missionPos) > 1) {
-                time += Time.deltaTime;
+            if ((time += Time.deltaTime) < travelingTime)
+            {
                 float fraction = time / travelingTime;
                 character.transform.position = Vector3.Lerp(startPos, missionPos, fraction);
                 character.transform.rotation = Quaternion.LookRotation(missionPos - character.transform.position);
