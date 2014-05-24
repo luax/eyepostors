@@ -50,11 +50,17 @@ public class GazeDistance : Singleton<GazeDistance>
 
     public float CalculateDistance(GameObject gameObject)
     {
-        bool invalidGaze = Settings.triggerOption == TriggerOption.Gaze && (!gazePoint.IsValid || !gazePoint.IsWithinScreenBounds);
-
-        if (!gameObject.renderer.isVisible || invalidGaze)
+        if (!gameObject.renderer.isVisible)
         {
             return float.MaxValue;
+        }
+
+        if (Settings.triggerOption == TriggerOption.Gaze)
+        {
+            if (!gazePoint.IsValid || !gazePoint.IsWithinScreenBounds)
+            {
+                return float.MaxValue;
+            }
         }
 
 #if DEBUG
