@@ -13,6 +13,6 @@ public class LightScript : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
 	{
-		transform.Rotate (new Vector3 (1, 1, 1) * Time.deltaTime * 20f);
+		transform.Rotate (new Vector3 (0, 1, 0) * Time.deltaTime * 20f);
 	}
 }

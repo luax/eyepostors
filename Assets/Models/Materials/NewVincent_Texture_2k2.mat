@@ -36,4 +36,4 @@ Material:
       data:
         first:
           name: _ShirtColor
-        second: {r: 1, g: 1, b: 1, a: 1}
+        second: {r: 1, g: .0431372523, b: .0431372523, a: 1}

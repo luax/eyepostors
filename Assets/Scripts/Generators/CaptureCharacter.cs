@@ -6,16 +6,12 @@ public class CaptureCharacter : MonoBehaviour
 {
 	public Texture2D charTexture;
 	public int textureSizeHorizontal = 1024;
-	public int numberOfAngles = 15;
-	public int numberOfFrames = 15;
 	public bool saveTextures = true;
 
-	public bool CaptureFinished { get; set; }
-
-	public Texture2D[,] Textures { get; set; }
-
-	public Texture2D[,] NormalMaps { get; set; }
-    
+	private int numberOfAngles = 16;
+	private int numberOfFrames = 16;
+	private Texture2D texture;
+	private Texture2D normalMap;
 	private Transform cameraPivot;
 	private Animator animator;
 	private Transform myTransform;
@@ -36,7 +32,9 @@ public class CaptureCharacter : MonoBehaviour
 	private Color[] blankNormalFrame;
 
 	void Start ()
-	{   	
+	{   
+		numberOfAngles = Settings.numberOfAngles;
+		numberOfFrames = Settings.numberOfFrames;
 		myTransform = gameObject.transform;
 		midGeoTransform = transform.FindChild ("CarlMidGeo");
 		myRenderer = midGeoTransform.GetComponent<SkinnedMeshRenderer> ();
@@ -46,15 +44,13 @@ public class CaptureCharacter : MonoBehaviour
 		animator.speed = 0f;
 		
 		textureSizeVertical = textureSizeHorizontal / 2;
+		Debug.Log ("Making texture with dimensions " + textureSizeHorizontal + "x" + textureSizeVertical);
 		frameSizeHorizontal = textureSizeHorizontal / 8;
 		frameSizeVertical = textureSizeVertical / 2;
 		int framesInRow = textureSizeHorizontal / frameSizeHorizontal;
 		int framesInColumn = textureSizeVertical / frameSizeVertical;
 		totalFrames = framesInRow * framesInColumn;
-		
-		Textures = new Texture2D[numberOfAngles, numberOfAngles];
-		NormalMaps = new Texture2D[numberOfAngles, numberOfAngles];
-		
+
 		int numPixels = frameSizeHorizontal * frameSizeVertical;
 		blankFrame = new Color[numPixels];
 		blankNormalFrame = new Color[numPixels];
@@ -64,12 +60,8 @@ public class CaptureCharacter : MonoBehaviour
 			blankNormalFrame [i] = normalColor;
 		}
 		
-		for (int x = 0; x < numberOfAngles; x++) {
-			for (int y = 0; y < numberOfAngles; y++) {
-				Textures [x, y] = new Texture2D (textureSizeHorizontal, textureSizeVertical, TextureFormat.ARGB32, false);
-				NormalMaps [x, y] = new Texture2D (textureSizeHorizontal, textureSizeVertical, TextureFormat.ARGB32, false);
-			}
-		}
+		AllocateNewTextures ();
+
 		Camera.main.backgroundColor = Color.clear;
 		myRenderer.material.mainTexture = charTexture;
 		StartCoroutine (CaptureFrames ());
@@ -80,7 +72,7 @@ public class CaptureCharacter : MonoBehaviour
 		startTime = Time.time;
 		Vector3 yAxis = new Vector3 (0f, 1f, 0f);
 		Vector3 xAxis = new Vector3 (1f, 0f, 0f);
-		for (indexX = 0; indexX < numberOfAngles; indexX++) {
+		for (indexX = 0; indexX < numberOfAngles / 4; indexX++) {
 			for (indexY = 0; indexY < numberOfAngles; indexY++) {
 				for (frame = 0; frame < numberOfFrames; frame++) {
 					yield return new WaitForEndOfFrame ();
@@ -89,9 +81,10 @@ public class CaptureCharacter : MonoBehaviour
 				}
 				FillTextures ();
 				SaveTextures ();
+				AllocateNewTextures ();
 				RotateCamera (yAxis, 360f);
 				frame = 0;
-				Debug.Log ("x: " + indexX + ", y: " + indexY);
+				Debug.Log ("X: " + indexX + ", Y: " + indexY);
 			}
 			ResetYRotation ();
 			currentRotation = 0;
@@ -102,19 +95,25 @@ public class CaptureCharacter : MonoBehaviour
 		Debug.Log ("Time to generate imposter: " + (Time.time - startTime) + " seconds");
 	}
 	
+	private void AllocateNewTextures ()
+	{
+		texture = new Texture2D (textureSizeHorizontal, textureSizeVertical, TextureFormat.ARGB32, false);
+		normalMap = new Texture2D (textureSizeHorizontal, textureSizeVertical, TextureFormat.ARGB32, false);
+	}
+	
 	private void FillTextures ()
 	{
 		for (int i = frame; i < totalFrames; i++) {
-			FillBlankFrame (i, Textures [indexX, indexY], blankFrame);
-			FillBlankFrame (i, NormalMaps [indexX, indexY], blankNormalFrame);
+			FillBlankFrame (i, texture, blankFrame);
+			FillBlankFrame (i, normalMap, blankNormalFrame);
 		}
 	}
 	
 	private void SaveTextures ()
 	{
 		if (saveTextures) {
-			SaveToPNG ("texture" + indexX + "_" + indexY + ".png", Textures [indexX, indexY]);
-			SaveToPNG ("normal" + indexX + "_" + indexY + ".png", NormalMaps [indexX, indexY]);
+			SaveToPNG ("texture" + indexX + "_" + indexY + ".png", texture);
+			SaveToPNG ("normal" + indexX + "_" + indexY + ".png", normalMap);
 		}
 	}
     
@@ -124,8 +123,8 @@ public class CaptureCharacter : MonoBehaviour
 		Texture2D textureFrame = new Texture2D (Screen.width, Screen.height, TextureFormat.ARGB32, false);
 		textureFrame.ReadPixels (new Rect (0f, 0f, Screen.width, Screen.height), 0, 0, false);
 		Texture2D normalFrame = normalGenerator.GetNormal ();
-		SetFrameInTexture (Textures [indexX, indexY], textureFrame);
-		SetFrameInTexture (NormalMaps [indexX, indexY], normalFrame);
+		SetFrameInTexture (texture, textureFrame);
+		SetFrameInTexture (normalMap, normalFrame);
 	}
 	
 	private void FillBlankFrame (int frame, Texture2D texture, Color[] colors)
@@ -165,7 +164,7 @@ public class CaptureCharacter : MonoBehaviour
 
 	private void RotateCamera (Vector3 axis, float totalAngles)
 	{
-		cameraPivot.eulerAngles -= (float)(totalAngles / (numberOfAngles - 1)) * axis;
+		cameraPivot.eulerAngles -= (float)(totalAngles / ((numberOfAngles / (360f / totalAngles)) - 1)) * axis;
 		currentNormalizedTime = 0f;
 	}
 	
@@ -175,7 +174,7 @@ public class CaptureCharacter : MonoBehaviour
 		cameraPivot.eulerAngles = new Vector3 (e.x, 0, 0);
 	}
 	
-	public static void SaveToPNG (string name, Texture2D tex)
+	public void SaveToPNG (string name, Texture2D tex)
 	{
 		File.WriteAllBytes (Application.dataPath + "/Resources/GeneratedTextures/" + name, tex.EncodeToPNG ());
 	}
