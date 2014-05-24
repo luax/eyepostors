@@ -6,11 +6,12 @@ public class CrossRoad : MonoBehaviour
 {
     public int numberOfImpostors = 100;
     public float respawnWidth = 2.5f;
+    public GameObject LeftToRightRoad;
+    public GameObject TopToBottomRoad;
+
     private GameObject[] characters;
     private float characterY;
     private Dictionary<GameObject, Mission> missions;
-    private GameObject road1;
-    private GameObject road2;
     private Vector3 leftPosition;
     private Vector3 rightPosition;
     private Vector3 topPosition;
@@ -123,10 +124,10 @@ public class CrossRoad : MonoBehaviour
 
     private void Initialize()
     {
-        leftPosition = GameObject.Find("Road1").transform.FindChild("StartPoint").transform.position;
-        rightPosition = GameObject.Find("Road1").transform.FindChild("EndPoint").transform.position;
-        topPosition = GameObject.Find("Road2").transform.FindChild("StartPoint").transform.position;
-        bottomPosition = GameObject.Find("Road2").transform.FindChild("EndPoint").transform.position;
+        leftPosition = LeftToRightRoad.transform.FindChild("StartPoint").transform.position;
+        rightPosition = LeftToRightRoad.transform.FindChild("EndPoint").transform.position;
+        topPosition = TopToBottomRoad.transform.transform.FindChild("StartPoint").transform.position;
+        bottomPosition = TopToBottomRoad.transform.transform.FindChild("EndPoint").transform.position;
         missions = new Dictionary<GameObject, Mission>();
         characters = new GameObject[numberOfImpostors];
     }
