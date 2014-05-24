@@ -38,9 +38,14 @@ public class CharacterGazeLOD : MonoBehaviour
 
 	public void Update ()
 	{
-		float distance = float.MaxValue;
-		NormalizedTime += Time.deltaTime;
+        NormalizedTime += Time.deltaTime;
 		NormalizedTime = NormalizedTime % 1.0f;
+
+        if (CoolDown()) {
+            return;
+        }
+
+        float distance = float.MaxValue;
 
 		if (impostor.activeSelf) {
 			distance = GazeDistance.Instance.CalculateDistance (impostor);
@@ -48,9 +53,7 @@ public class CharacterGazeLOD : MonoBehaviour
 			distance = GazeDistance.Instance.CalculateDistance (characterMesh);
 		}
 
-		if (!CoolDown ()) {
-			SetLOD (GetLOD (distance));
-		}
+		SetLOD (GetLOD (distance));
 	}
 
 	private void SetLOD (LOD lod)

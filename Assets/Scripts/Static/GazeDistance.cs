@@ -13,11 +13,14 @@ public class GazeDistance : Singleton<GazeDistance>
     private Vector3 gazePoint3D;
     private Vector3 gazePoint2D;
 
+    private Rect rect;
+
     private GameObject latestObject;
 
     public void Awake()
     {
         gazePointProvider = EyeXGazePointProvider.GetInstance();
+        rect = new Rect();
     }
 
     public void OnEnable()
@@ -33,13 +36,10 @@ public class GazeDistance : Singleton<GazeDistance>
     public void Update()
     {
 
-        if (Settings.triggerOption == TriggerOption.Mouse)
-        {
+        if (Settings.triggerOption == TriggerOption.Mouse) {
             gazePoint3D = Input.mousePosition;
             gazePoint2D = Input.mousePosition;
-        }
-        else
-        {
+        } else {
             gazePoint = gazePointProvider.GetLastGazePoint(Settings.gazePointType);
             gazePoint3D = gazePoint.Screen;
             gazePoint2D = gazePoint.GUI;
@@ -50,15 +50,12 @@ public class GazeDistance : Singleton<GazeDistance>
 
     public float CalculateDistance(GameObject gameObject)
     {
-        if (!gameObject.renderer.isVisible)
-        {
+        if (!gameObject.renderer.isVisible) {
             return float.MaxValue;
         }
 
-        if (Settings.triggerOption == TriggerOption.Gaze)
-        {
-            if (!gazePoint.IsValid || !gazePoint.IsWithinScreenBounds)
-            {
+        if (Settings.triggerOption == TriggerOption.Gaze) {
+            if (!gazePoint.IsValid || !gazePoint.IsWithinScreenBounds) {
                 return float.MaxValue;
             }
         }
@@ -70,19 +67,17 @@ public class GazeDistance : Singleton<GazeDistance>
         Vector3 tPos = gameObject.transform.position;
         cPos.y = tPos.y = 0;
 
-        if (MuchClose(ref tPos))
-        {
+        if (MuchClose(ref tPos)) {
             return 0f;
         }
 
-        if (MaxDistance(ref tPos))
-        {
+        if (MaxDistance(ref tPos)) {
             return float.MaxValue;
         }
 
-        Rect rect = BoundsToScreenRect(gameObject.renderer.bounds);
+        BoundsToScreenRect(gameObject.renderer.bounds);
         //Rect rect = ProjectedRect.GetProjectedRect(gameObject, Camera.main).rect;
-        return DistanceToRectangle(rect, gazePoint2D);
+        return DistanceToRectangle();
     }
 
     private bool MuchClose(ref Vector3 objectPosition)
@@ -95,10 +90,10 @@ public class GazeDistance : Singleton<GazeDistance>
         return Vector3.Distance(cPos, objectPosition) > Settings.worldMaxDistance;
     }
 
-    private float DistanceToRectangle(Rect rect, Vector2 gaze)
+    private float DistanceToRectangle()
     {
-        float dx = Mathf.Max(rect.xMin - gaze.x, 0, gaze.x - rect.xMax);
-        float dy = Mathf.Max(rect.yMin - gaze.y, 0, gaze.y - rect.yMax);
+        float dx = Mathf.Max(rect.xMin - gazePoint2D.x, 0, gazePoint2D.x - rect.xMax);
+        float dy = Mathf.Max(rect.yMin - gazePoint2D.y, 0, gazePoint2D.y - rect.yMax);
         return Mathf.Sqrt(dx * dx + dy * dy);
     }
 
@@ -108,12 +103,13 @@ public class GazeDistance : Singleton<GazeDistance>
         if (latestObject.renderer != null && latestObject.renderer.isVisible)
         {
             //GUI.Box(ProjectedRect.GetProjectedRect(latestObject, Camera.main).rect, "Distance from trigger option " + CalculateDistance(latestObject));
-            GUI.Box(BoundsToScreenRect(latestObject.renderer.bounds), "Distance from trigger option " + CalculateDistance(latestObject));
+            BoundsToScreenRect(latestObject.renderer.bounds);
+            GUI.Box(rect, "Distance from trigger option " + CalculateDistance(latestObject));
         }
     }
 #endif
 
-    public Rect BoundsToScreenRect(Bounds b)
+    public void BoundsToScreenRect(Bounds b)
     {
         Vector3[] vertices = new Vector3[8];
         float h = Screen.height;
@@ -132,14 +128,18 @@ public class GazeDistance : Singleton<GazeDistance>
 
         Vector3 min = ConvertToScreenSpace(vertices[0]);
         Vector3 max = ConvertToScreenSpace(vertices[0]);
-        for (int i = 1; i < vertices.Length; i++)
-        {
+        for (int i = 1; i < vertices.Length; i++) {
             vertices[i] = ConvertToScreenSpace(vertices[i]);
             min = Vector3.Min(min, vertices[i]);
             max = Vector3.Max(max, vertices[i]);
         }
 
-        return new Rect(min.x, min.y, max.x - min.x, max.y - min.y);
+        rect.xMin = min.x;
+        rect.yMin = min.y;
+        rect.xMax = max.x;
+        rect.yMax = max.y;
+
+        //return new Rect(min.x, min.y, max.x - min.x, max.y - min.y);
     }
 
     private Vector3 ConvertToScreenSpace(Vector3 p)
