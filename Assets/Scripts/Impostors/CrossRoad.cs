@@ -34,7 +34,7 @@ public class CrossRoad : MonoBehaviour
         private Vector3 missionPos;
         private float travelingTime;
         private float time;
-        private float speed = 3;
+        private float speed;
         private StartPosition start;
 
         public Mission(GameObject g, CrossRoad r, StartPosition s)
@@ -65,6 +65,7 @@ public class CrossRoad : MonoBehaviour
         private void Reset()
         {
             time = 0;
+            speed = Random.Range(1f, 2f);
             startPos.y = cr.characterY;
             missionPos.y = cr.characterY;
             travelingTime = Vector3.Distance(startPos, missionPos) / speed;
@@ -113,15 +114,15 @@ public class CrossRoad : MonoBehaviour
     public void Start()
     {
         GameObject character = (GameObject)Resources.Load("Character");
+        characterY = character.transform.position.y;
+
         Initialize();
 
         for (int i = 0; i < numberOfImpostors; i++) {
             GameObject g = (GameObject)Instantiate(character);
             characters[i] = g;
-            characterY = characters[0].transform.position.y; // TODO
-
             StartPosition s = GetStart(i);
-            g.transform.position = GetRandomPosition(g.transform.position, s); // 
+            g.transform.position = GetRandomPosition(g.transform.position, s);
             missions.Add(g, new Mission(g, this, s));
         }
     }
@@ -180,17 +181,6 @@ public class CrossRoad : MonoBehaviour
         } else {
             point.z += value;
         }
-    }
-
-    private Vector3 GetOffset(ref Vector3 point, bool x)
-    {
-        float value = Random.Range(-respawnWidth, respawnWidth);
-        if (x) {
-            point.x += value;
-        } else {
-            point.z += value;
-        }
-        return point;
     }
 
     private StartPosition GetStart(int index)
