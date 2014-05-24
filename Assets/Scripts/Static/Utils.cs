@@ -15,6 +15,10 @@ public class Utils : Singleton<Utils>
     public void ToggleGazePoint()
     {
         gazePoint = !gazePoint;
+        SetGazePoint(gazePoint);
+    }
+
+    public void SetGazePoint(bool enabled) {
         if (gazePoint)
         {
             gazePointVisualiser = Instantiate(Resources.Load("GazePointVisualizer")) as GameObject;

@@ -9,18 +9,25 @@ public class GazeDistance : Singleton<GazeDistance>
     private EyeXGazePoint gazePoint;
     private EyeXGazePointProvider gazePointProvider;
 
-    private Vector3 cPos;
     private Vector3 gazePoint3D;
     private Vector3 gazePoint2D;
-
+    private Vector3 cPos;
     private Rect rect;
+    private Transform cameraTransform;
+    private Camera mainCamera;
 
     private GameObject latestObject;
-
+            	
     public void Awake()
     {
         gazePointProvider = EyeXGazePointProvider.GetInstance();
+    }
+
+    public void Start()
+    {
         rect = new Rect();
+        cameraTransform = Camera.main.transform;
+        mainCamera = Camera.main;
     }
 
     public void OnEnable()
@@ -45,7 +52,7 @@ public class GazeDistance : Singleton<GazeDistance>
             gazePoint2D = gazePoint.GUI;
         }
 
-        cPos = Camera.main.transform.position;
+        cPos = cameraTransform.position;
     }
 
     public float CalculateDistance(GameObject gameObject)
@@ -144,7 +151,7 @@ public class GazeDistance : Singleton<GazeDistance>
 
     private Vector3 ConvertToScreenSpace(Vector3 p)
     {
-        Vector3 r = Camera.main.WorldToScreenPoint(p);
+        Vector3 r = mainCamera.WorldToScreenPoint(p);
         r.y = Screen.height - r.y;
         return r;
     }
