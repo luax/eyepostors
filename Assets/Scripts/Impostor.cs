@@ -6,8 +6,8 @@ public class Impostor : MonoBehaviour
 	public int numberOfFrames = 16;
 	public int numberOfAngles = 16;
 	public Color shirtColor;
+
 	// Component references
-	
 	private Transform impostorTransform;
 	private Transform parentTransform;
 	private Transform cameraTransform;

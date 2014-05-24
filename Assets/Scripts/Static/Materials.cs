@@ -3,7 +3,7 @@ using System.Collections;
 
 public class Materials : Singleton<Materials>
 {
-	public int numberOfAngles = 16	;
+	private int numberOfAngles = Settings.numberOfAngles;
 	private Material[,] materials;
 	private string shader = "ShirtColor/Transparent";
 

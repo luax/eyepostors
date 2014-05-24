@@ -6,15 +6,8 @@ using System.Collections;
 
 public class GazeDistance : Singleton<GazeDistance>
 {
-
-
-    private EyeXGazePointType gazePointType;
-    private TriggerOption triggerOption;
-    private EyeXGazePointProvider gazePointProvider;
     private EyeXGazePoint gazePoint;
-
-    public const float maxDistance = 20f;
-    public const float minDistance = 5f;
+    private EyeXGazePointProvider gazePointProvider;
 
     private Vector3 cPos;
     private Vector3 gazePoint3D;
@@ -27,43 +20,27 @@ public class GazeDistance : Singleton<GazeDistance>
         gazePointProvider = EyeXGazePointProvider.GetInstance();
     }
 
-    public void Start()
-    {
-        CharacterGazeLOD gazeLOD = GameObject.FindObjectOfType<CharacterGazeLOD>();
-        if (gazeLOD != null)
-        {
-            triggerOption = gazeLOD.option;
-            gazePointType = gazeLOD.gazePointType;
-        }
-        else
-        {
-            triggerOption = TriggerOption.Mouse;
-            gazePointType = EyeXGazePointType.GazeLightlyFiltered;
-            Debug.LogError("No CharacterGazeLOD script was found and could not get any trigger or gaze point option");
-        }
-    }
-
     public void OnEnable()
     {
-        gazePointProvider.StartStreaming(gazePointType);
+        gazePointProvider.StartStreaming(Settings.gazePointType);
     }
 
     public void OnDisable()
     {
-        gazePointProvider.StopStreaming(gazePointType);
+        gazePointProvider.StopStreaming(Settings.gazePointType);
     }
 
     public void Update()
     {
 
-        if (triggerOption == TriggerOption.Mouse)
+        if (Settings.triggerOption == TriggerOption.Mouse)
         {
             gazePoint3D = Input.mousePosition;
             gazePoint2D = Input.mousePosition;
         }
         else
         {
-            gazePoint = gazePointProvider.GetLastGazePoint(gazePointType);
+            gazePoint = gazePointProvider.GetLastGazePoint(Settings.gazePointType);
             gazePoint3D = gazePoint.Screen;
             gazePoint2D = gazePoint.GUI;
         }
@@ -73,7 +50,7 @@ public class GazeDistance : Singleton<GazeDistance>
 
     public float CalculateDistance(GameObject gameObject)
     {
-        bool invalidGaze = triggerOption == TriggerOption.Gaze && (!gazePoint.IsValid || !gazePoint.IsWithinScreenBounds);
+        bool invalidGaze = Settings.triggerOption == TriggerOption.Gaze && (!gazePoint.IsValid || !gazePoint.IsWithinScreenBounds);
 
         if (!gameObject.renderer.isVisible || invalidGaze)
         {
@@ -87,12 +64,12 @@ public class GazeDistance : Singleton<GazeDistance>
         Vector3 tPos = gameObject.transform.position;
         cPos.y = tPos.y = 0;
 
-        if (MuchClose(gameObject, ref tPos))
+        if (MuchClose(ref tPos))
         {
             return 0f;
         }
 
-        if (MaxDistance(gameObject, ref tPos))
+        if (MaxDistance(ref tPos))
         {
             return float.MaxValue;
         }
@@ -102,14 +79,14 @@ public class GazeDistance : Singleton<GazeDistance>
         return DistanceToRectangle(rect, gazePoint2D);
     }
 
-    private bool MuchClose(GameObject gameObject, ref Vector3 objectPosition)
+    private bool MuchClose(ref Vector3 objectPosition)
     {
-        return Vector3.Distance(cPos, objectPosition) < minDistance;
+        return Vector3.Distance(cPos, objectPosition) < Settings.worldMinDistance;
     }
 
-    private bool MaxDistance(GameObject gameObject, ref Vector3 objectPosition)
+    private bool MaxDistance(ref Vector3 objectPosition)
     {
-        return Vector3.Distance(cPos, objectPosition) > maxDistance;
+        return Vector3.Distance(cPos, objectPosition) > Settings.worldMaxDistance;
     }
 
     private float DistanceToRectangle(Rect rect, Vector2 gaze)

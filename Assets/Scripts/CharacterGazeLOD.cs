@@ -1,25 +1,15 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public enum TriggerOption
-{
-	Mouse,
-	Gaze
-}
-
 public class CharacterGazeLOD : MonoBehaviour
 {
 	public float NormalizedTime { get; set; }
 
-	public TriggerOption option;
-	public EyeXGazePointType gazePointType = EyeXGazePointType.GazeLightlyFiltered;
-	public float highLimit = 50f; // TODO
-	public float standardLimit = 180f; // TODO
 	public Mesh high;
 	public Mesh medium;
 	public GameObject impostor;
 	public GameObject characterMesh;
-	public float coolDownTime = 0.5f;
+
 	private Transform myTransform;
 	private Transform cameraTransform;
 	private SkinnedMeshRenderer characterRenderer;
@@ -91,7 +81,7 @@ public class CharacterGazeLOD : MonoBehaviour
 
 	private void SetCoolDown ()
 	{
-		coolDown = coolDownTime;
+		coolDown = Settings.cooldownTime;
 	}
 
 	private bool CoolDown ()
@@ -101,9 +91,9 @@ public class CharacterGazeLOD : MonoBehaviour
 
 	private LOD GetLOD (float distance)
 	{
-		if (distance < highLimit) {
+		if (distance < Settings.gazeDistanceHigh) {
 			return LOD.High;
-		} else if (distance < standardLimit) {
+		} else if (distance < Settings.gazeDistanceStandard) {
 			return LOD.Standard;
 		}
 		return LOD.Low;
