@@ -4,16 +4,16 @@ using System.Collections;
 public class ShirtColor : MonoBehaviour
 {
 
-	public Color shirtColor;
+	public int shirtColor;
 	public GameObject characterMesh;
 	public GameObject impostor;
 	
 	
 	// Use this for initialization
-	void Start ()
+	void Start()
 	{
-		shirtColor = new Color (Random.Range (0f, 1f), Random.Range (0f, 1f), Random.Range (0f, 1f), 1f);
-		characterMesh.GetComponent<SkinnedMeshRenderer> ().material.SetColor ("_ShirtColor", shirtColor);
-		impostor.GetComponent<Impostor> ().shirtColor = shirtColor;
+		shirtColor = Random.Range(0, Settings.numberOfColors - 1);
+		characterMesh.GetComponent<SkinnedMeshRenderer>().sharedMaterial = Materials.GetMaterial(shirtColor);
+		impostor.GetComponent<Impostor>().ShirtColor = shirtColor;
 	}
 }

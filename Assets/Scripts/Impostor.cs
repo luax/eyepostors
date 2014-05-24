@@ -3,8 +3,7 @@ using System.Collections;
 
 public class Impostor : MonoBehaviour
 {
-	public Color shirtColor;
-
+	public int ShirtColor { get; set; }
 	private Transform impostorTransform;
 	private Transform parentTransform;
 	private Transform cameraTransform;
@@ -118,8 +117,7 @@ public class Impostor : MonoBehaviour
 	}
 	private void SetMaterial(int indexX, int indexY)
 	{
-		impostorRenderer.material = Materials.Instance.GetMaterial(indexX, indexY);
-		impostorRenderer.material.SetColor("_ShirtColor", shirtColor);
-		SetFrame(frameIndex);
+		impostorRenderer.sharedMaterial = Materials.GetMaterial(ShirtColor, indexX, indexY);
+		//SetFrame(frameIndex);
 	}
 }
