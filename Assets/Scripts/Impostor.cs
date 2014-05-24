@@ -28,7 +28,12 @@ public class Impostor : MonoBehaviour
 		characterGazeLOD = transform.parent.GetComponent<CharacterGazeLOD>();
 		quadRotation = new Vector3(0, 180f, 0);
 		quad = gameObject.GetComponent<MeshFilter>().mesh;
-		SetUVs();
+		quad.uv = new Vector2[] {
+			new Vector2(0f, 0f),
+			new Vector2(0.125f, 1f),
+			new Vector2(0.125f, 0.5f),
+			new Vector2(0f, 1f)
+		};
 		SetMaterial(0, 0);
 	}
     
@@ -62,7 +67,7 @@ public class Impostor : MonoBehaviour
 		}
 	}
 	
-	int GetIndexX(Vector3 cameraToObject)
+	private int GetIndexX(Vector3 cameraToObject)
 	{
 		Vector3 levelCameraToObject = cameraToObject;
 		levelCameraToObject.y = 0;
@@ -70,7 +75,7 @@ public class Impostor : MonoBehaviour
 		return Mathf.RoundToInt((angle / 90f) * ((Settings.numberOfAngles / 4) - 1));
 	}
 	
-	int GetIndexY(Vector3 cameraToObject)
+	private int GetIndexY(Vector3 cameraToObject)
 	{
 		Vector3 parentRight = parentTransform.right;
 		Vector3 parentForward = parentTransform.forward;
@@ -91,7 +96,7 @@ public class Impostor : MonoBehaviour
 			new Vector2(x, y),
 		 	new Vector2(x + 0.125f, 0.5f + y),
 		 	new Vector2(x + 0.125f, y),
-		 	new Vector2(x, 0.5f + y)};
+		 	new Vector2(x, 0.5f + y) };
 	}
 
 	public float GetAnimationPercentage()
@@ -106,18 +111,8 @@ public class Impostor : MonoBehaviour
 		SetFrame(frameIndex);
 	}
 
-	private void SetUVs()
-	{
-		quad.uv = new Vector2[] {
-            new Vector2(0f, 0.5f),
-            new Vector2(0.125f, 1f),
-            new Vector2(0.125f, 0.5f),
-            new Vector2(0f, 1f)
-        };
-	}
 	private void SetMaterial(int indexX, int indexY)
 	{
 		impostorRenderer.sharedMaterial = Materials.GetMaterial(ShirtColor, indexX, indexY);
-		//SetFrame(frameIndex);
 	}
 }
