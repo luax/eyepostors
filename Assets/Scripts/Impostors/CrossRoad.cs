@@ -5,6 +5,7 @@ using System.Collections.Generic;
 public class CrossRoad : MonoBehaviour
 {
     public int numberOfImpostors = 100;
+    public float respawnWidth = 2.5f;
     private GameObject[] characters;
     private float characterY;
     private Dictionary<GameObject, Mission> missions;
@@ -54,7 +55,7 @@ public class CrossRoad : MonoBehaviour
                 character.transform.position = Vector3.Lerp(startPos, missionPos, fraction);
                 character.transform.rotation = Quaternion.LookRotation(missionPos - character.transform.position);
             } else {
-                Teleport();
+                Respawn();
                 GetMission();
                 Reset();
             }
@@ -68,7 +69,7 @@ public class CrossRoad : MonoBehaviour
             travelingTime = Vector3.Distance(startPos, missionPos) / speed;
         }
  
-        private void Teleport()
+        private void Respawn()
         {
             SetPosition(true);
         }
@@ -83,16 +84,16 @@ public class CrossRoad : MonoBehaviour
             Vector3 p = new Vector3();
             switch (start) {
                 case StartPosition.Left: 
-                    p = GetPosition(cr.leftPosition, true); 
+                    p = cr.GetOffset(s ? cr.leftPosition : cr.rightPosition, true); 
                     break;
                 case StartPosition.Top:
-                    p = GetPosition(cr.topPosition, false); 
+                    p = cr.GetOffset(s ? cr.topPosition : cr.bottomPosition, false); 
                     break;
                 case StartPosition.Right:
-                    p = GetPosition(cr.rightPosition, true); 
+                    p = cr.GetOffset(s ? cr.rightPosition : cr.leftPosition, true); 
                     break;
                 case StartPosition.Bottom:
-                    p = GetPosition(cr.bottomPosition, false); 
+                    p = cr.GetOffset(s ? cr.bottomPosition : cr.topPosition, false); 
                     break;
             }
             
@@ -102,19 +103,8 @@ public class CrossRoad : MonoBehaviour
                 missionPos = p;
             }
         }
-        
-        private Vector3 GetPosition(Vector3 point, bool x)
-        {
-            if (x) {
-                point.x += Random.Range(-2.5f, 2.5f);
-            } else {
-                point.z += Random.Range(-2.5f, 2.5f);
-            }
-            return point;
-        }
     }
     
-
     public void Start()
     {
         GameObject character = (GameObject)Resources.Load("Character");
@@ -124,7 +114,6 @@ public class CrossRoad : MonoBehaviour
             GameObject g = (GameObject)Instantiate(character);
             characters [i] = g;
             characterY = characters [0].transform.position.y; // TODO
-            
             
             StartPosition s = GetStart(i);
             g.transform.position = GetRandomPosition(g.transform.position, s); // 
@@ -156,24 +145,38 @@ public class CrossRoad : MonoBehaviour
             case StartPosition.Left: 
                 p = leftPosition;
                 p.z = Random.Range(rightPosition.z, leftPosition.z);
+                p.x += Random.Range(-respawnWidth, respawnWidth);
                 break;
             case StartPosition.Top:
                 p = topPosition;
                 p.x = Random.Range(bottomPosition.x, topPosition.x);
+                p.z += Random.Range(-respawnWidth, respawnWidth);
                 break;
             case StartPosition.Right:
                 p = rightPosition;
                 p.z = Random.Range(rightPosition.z, leftPosition.z);
+                p.x += Random.Range(-respawnWidth, respawnWidth);
                 break;
             case StartPosition.Bottom:
                 p = bottomPosition;
                 p.x = Random.Range(bottomPosition.x, topPosition.x);
+                p.z += Random.Range(-respawnWidth, respawnWidth);
                 break;
         }
         p.y = characterY;
         return p;
     }
-    
+
+    private Vector3 GetOffset(Vector3 point, bool x)
+    {
+        if (x) {
+            point.x += Random.Range(-respawnWidth, respawnWidth);
+        } else {
+            point.z += Random.Range(-respawnWidth, respawnWidth);
+        }
+        return point;
+    }
+
     private StartPosition GetStart(int index)
     {
         if (index < numberOfImpostors / 4) {
