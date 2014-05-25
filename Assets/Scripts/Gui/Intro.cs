@@ -17,8 +17,8 @@ Tex text text";
         // Disable all lock cursor scripts
         LockCursor(false);
 
-        // Create the start camera
-        startCamera = (GameObject)Instantiate(Resources.Load("StartCamera"));
+        // Use the start camera
+        startCamera = transform.FindChild("StartCamera").gameObject;
         startCamera.SetActive(true);
         Settings.cameraTransform = startCamera.GetComponent<Camera>().transform;
 
