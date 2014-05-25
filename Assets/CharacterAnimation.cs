@@ -76,7 +76,7 @@ public class CharacterAnimation : MonoBehaviour
         if (activate && quality == LOD.Low) {
             impostorScript.Quality = 0;
             impostorScript.Update();
-        } else if (activate) {
+        } else {
             impostorScript.Quality = 1;
             impostorScript.Update();
         }

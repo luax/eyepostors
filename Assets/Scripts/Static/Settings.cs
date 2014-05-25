@@ -10,7 +10,7 @@ public enum TriggerOption
 public static class Settings
 {
     // Eye tracking options
-    public const TriggerOption triggerOption = TriggerOption.Mouse;
+    public const TriggerOption triggerOption = TriggerOption.Gaze;
     public const EyeXGazePointType gazePointType = EyeXGazePointType.GazeLightlyFiltered;
 
     // Character gaze LOD
@@ -28,7 +28,7 @@ public static class Settings
     public const int numberOfColors = 15;
 
     public const int minImpostors = 1;
-    public const int defImpostors = 10;
+    public const int defImpostors = 500;
     public const int maxImpostors = 50000;
     public static int numberOfImpostors;
 
@@ -38,7 +38,8 @@ public static class Settings
 
     // Screen
     public static float diagonalLength;
-    static Settings() {
+    static Settings()
+    {
         if (Camera.main != null) {
             cameraTransform = Camera.main.transform;
         }

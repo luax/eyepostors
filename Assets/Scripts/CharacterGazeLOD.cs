@@ -31,7 +31,7 @@ public class CharacterGazeLOD : MonoBehaviour
             return;
         }
 
-        float distance = float.MaxValue;
+        float distance = 0;
 
         if (impostor.activeSelf) {
             distance = GazeDistance.Instance.CalculateDistance(impostor);
@@ -47,25 +47,10 @@ public class CharacterGazeLOD : MonoBehaviour
         if (currentLOD == lod) {
             return;
         }
-
-        characterAnimation.EnableAnimation();
-        switch (lod) {
-            case LOD.High:
-                SetCoolDown();
-                characterAnimation.SetQuality(LOD.High);
-                break;
-            case LOD.Medium:
-                characterAnimation.SetQuality(LOD.Medium);
-                break;
-            case LOD.Low:
-                characterAnimation.SetQuality(LOD.Low);
-                break;
-            case LOD.Minimal:
-                characterAnimation.SetQuality(LOD.Minimal);
-                //TODO
-                break;
+        if (lod == LOD.High) {
+            SetCoolDown();
         }
-
+        characterAnimation.SetQuality(lod);
         currentLOD = lod;
     }
 

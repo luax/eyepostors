@@ -1,6 +1,5 @@
 ﻿#define DEBUG
 #undef DEBUG
-
 using UnityEngine;
 using System.Collections;
 
@@ -8,14 +7,12 @@ public class GazeDistance : Singleton<GazeDistance>
 {
     private EyeXGazePoint gazePoint;
     private EyeXGazePointProvider gazePointProvider;
-
     private Vector3 gazePoint3D;
     private Vector3 gazePoint2D;
     private Vector3 cPos;
     private Rect rect;
-
     private GameObject latestObject;
-            	
+                
     public void Awake()
     {
         gazePointProvider = EyeXGazePointProvider.GetInstance();
@@ -56,7 +53,7 @@ public class GazeDistance : Singleton<GazeDistance>
         }
 
         if (Settings.triggerOption == TriggerOption.Gaze) {
-            if (!gazePoint.IsValid || !gazePoint.IsWithinScreenBounds) {
+            if (!gazePoint.IsValid) {
                 return float.MaxValue;
             }
         }
@@ -75,10 +72,10 @@ public class GazeDistance : Singleton<GazeDistance>
         if (distance > Settings.worldMaxDistance) {
             return float.MaxValue;
         }
-
         BoundsToScreenRect(gameObject.renderer.bounds);
         return DistanceToRectangle() / Settings.diagonalLength;
     }
+
     private bool MuchFun(ref Vector3 objectPosition)
     {
         float dist = Vector3.Distance(cPos, objectPosition);
@@ -95,8 +92,7 @@ public class GazeDistance : Singleton<GazeDistance>
 #if DEBUG
     public void OnGUI()
     {
-        if (latestObject != null && latestObject.renderer != null && latestObject.renderer.isVisible)
-        {
+        if (latestObject != null && latestObject.renderer != null && latestObject.renderer.isVisible) {
             //GUI.Box(ProjectedRect.GetProjectedRect(latestObject, Camera.main).rect, "Distance from trigger option " + CalculateDistance(latestObject));
             BoundsToScreenRect(latestObject.renderer.bounds);
             GUI.Box(rect, "Distance " + CalculateDistance(latestObject));

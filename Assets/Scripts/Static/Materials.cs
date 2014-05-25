@@ -5,7 +5,7 @@ public static class Materials
 {
     private static int numberOfAngles = Settings.numberOfAngles;
     private static int numberOfColors = Settings.numberOfColors;
-    private static int quality = 2;
+    private const int numberOfQualities = 2;
     private static Material[,,,] impostorMaterials;
     private static Material[] meshMaterials;
     private static string shader = "ShirtColor/Transparent";
@@ -13,7 +13,7 @@ public static class Materials
 
     static Materials()
     {
-        impostorMaterials = new Material[numberOfColors, numberOfAngles, numberOfAngles, quality];
+        impostorMaterials = new Material[numberOfColors, numberOfAngles, numberOfAngles, numberOfQualities];
         meshMaterials = new Material[numberOfColors];
         colors = new Color[numberOfColors];
         for (int i = 0; i < numberOfColors; i++) {
