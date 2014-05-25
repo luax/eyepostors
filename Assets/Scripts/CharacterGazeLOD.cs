@@ -48,10 +48,10 @@ public class CharacterGazeLOD : MonoBehaviour
             return;
         }
 
-        SetCoolDown();
         characterAnimation.EnableAnimation();
         switch (lod) {
             case LOD.High:
+                SetCoolDown();
                 characterAnimation.SetQuality(LOD.High);
                 break;
             case LOD.Medium:
