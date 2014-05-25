@@ -44,25 +44,9 @@ public class CharacterAnimation : MonoBehaviour
     {
         if (quality == LOD.High) {
             SetCharacterMesh(true);
-            SetImpostor(false, LOD.Medium);
-        } else if (quality == LOD.Medium) {
-            if (currentLOD == LOD.High) {
-                UpdateNormalizedTime();
-                SetCharacterMesh(false);
-            }
-            SetImpostor(true, LOD.Medium);
-        } else if (quality == LOD.Low) {
-            if (currentLOD == LOD.High) {
-                UpdateNormalizedTime();
-                SetCharacterMesh(false);
-            }
-            SetImpostor(true, LOD.Low);
-        } else if (quality == LOD.Minimal) {
-            if (currentLOD == LOD.High) {
-                UpdateNormalizedTime();
-                SetCharacterMesh(false);
-            }
-            SetImpostor(true, LOD.Minimal);
+            SetImpostor(false);
+        } else {
+            SetImpostor(true, quality);
         }
         currentLOD = quality;
     }
@@ -82,8 +66,12 @@ public class CharacterAnimation : MonoBehaviour
         
     }
     
-    private void SetImpostor(bool activate, LOD quality)
+    private void SetImpostor(bool activate, LOD quality = LOD.Minimal)
     {
+        if (currentLOD == LOD.High) {
+            UpdateNormalizedTime();
+            SetCharacterMesh(false);
+        }
         impostor.SetActive(activate);
         if (activate && quality == LOD.Low) {
             impostorScript.Quality = 0;
