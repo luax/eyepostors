@@ -76,12 +76,6 @@ public class GazeDistance : Singleton<GazeDistance>
         return DistanceToRectangle() / Settings.diagonalLength;
     }
 
-    private bool MuchFun(ref Vector3 objectPosition)
-    {
-        float dist = Vector3.Distance(cPos, objectPosition);
-        return dist > Settings.worldMinDistance && dist < Settings.worldMaxDistance;
-    }
-
     private float DistanceToRectangle()
     {
         float dx = Mathf.Max(rect.xMin - gazePoint2D.x, 0, gazePoint2D.x - rect.xMax);
