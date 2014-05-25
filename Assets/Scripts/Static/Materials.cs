@@ -5,7 +5,11 @@ public static class Materials
 {
     private static int numberOfAngles = Settings.numberOfAngles;
     private static int numberOfColors = Settings.numberOfColors;
+
     private const int numberOfQualities = 2;
+    public const int MediumQuality = 1;
+    public const int LowQuality = 0;
+
     private static Material[,,,] impostorMaterials;
     private static Material[] meshMaterials;
     private static string shader = "ShirtColor/Transparent";
@@ -53,7 +57,7 @@ public static class Materials
     {
         Material mat = new Material(Shader.Find("ShirtColor/Transparent"));
         mat.SetColor("_ShirtColor", colors [color]);
-        if (quality == 1) {
+        if (quality == MediumQuality) {
             mat.SetTexture("_MainTex", (Texture)Resources.Load("GeneratedTextures/Medium/texture" + indexX + "_" + indexY));
             mat.SetTexture("_BumpMap", (Texture)Resources.Load("GeneratedTextures/Medium/normal" + indexX + "_" + indexY));
         } else {

@@ -12,73 +12,71 @@ public class CharacterAnimation : MonoBehaviour
     private LOD currentLOD;
     private Impostor impostorScript;
     private CharacterGazeLOD charGazeLOD;
-	
-    void Awake()
+
+    private bool meshActivated;
+    private bool impostorActivated;
+
+    public void Start()
     {
         animator = transform.FindChild("CharacterMesh").GetComponent<Animator>();
         characterRenderer = characterMesh.GetComponent<SkinnedMeshRenderer>();
         impostorScript = impostor.GetComponent<Impostor>();
-        currentLOD = LOD.Low;
-        characterMesh.SetActive(false);
-        impostor.SetActive(true);
         charGazeLOD = gameObject.GetComponent<CharacterGazeLOD>();
+        DefaultSettings();
     }
-	
-    // Update is called once per frame
-    void Update()
+
+    private void DefaultSettings()
+    {
+        currentLOD = LOD.Minimal;
+        meshActivated = false;
+
+        characterMesh.SetActive(meshActivated);
+        impostor.SetActive(impostorActivated);
+    }
+
+    public void Update()
     {
         NormalizedTime += Time.deltaTime;
         NormalizedTime = NormalizedTime % 1.0f;
     }
 
-    public void DisableAnimation()
+    private void Impostor(LOD lod)
     {
-        impostorScript.OutOfRange = true;
-    }
-    public void EnableAnimation()
-    {
-        impostorScript.OutOfRange = false;
+        UpdateNormalizedTime();
+        characterMesh.SetActive(false);
+
+        if (lod == LOD.Medium) {
+            impostorScript.UpdateMaterial(Materials.MediumQuality);
+        } else {
+            impostorScript.UpdateMaterial(Materials.LowQuality);
+            if (lod == LOD.Minimal) {
+                // TODO
+            }
+        }
+        impostor.SetActive(true);
     }
 
-    public void SetQuality(LOD quality)
+    private void Mesh()
     {
-        if (quality == LOD.High) {
-            SetCharacterMesh(true);
-            SetImpostor(false);
+        impostor.SetActive(false);
+        characterMesh.SetActive(true);
+        animator.Play("WalkForward", 0, NormalizedTime);
+    }
+
+    public void SetLOD(LOD lod)
+    {
+        if (lod == LOD.High) {
+            Mesh();
         } else {
-            SetImpostor(true, quality);
+            Impostor(lod);
         }
-        currentLOD = quality;
+        currentLOD = lod;
     }
 
     private void UpdateNormalizedTime()
     {
-        NormalizedTime = animator.GetCurrentAnimatorStateInfo(0).normalizedTime - 
+        NormalizedTime = animator.GetCurrentAnimatorStateInfo(0).normalizedTime -
             Mathf.Floor(animator.GetCurrentAnimatorStateInfo(0).normalizedTime);
     }
 
-    private void SetCharacterMesh(bool activate)
-    {
-        characterMesh.SetActive(activate);
-        if (activate) {   
-            animator.Play("WalkForward", 0, NormalizedTime);
-        }
-        
-    }
-    
-    private void SetImpostor(bool activate, LOD quality = LOD.Minimal)
-    {
-        if (currentLOD == LOD.High) {
-            UpdateNormalizedTime();
-            SetCharacterMesh(false);
-        }
-        impostor.SetActive(activate);
-        if (activate && quality == LOD.Low) {
-            impostorScript.Quality = 0;
-            impostorScript.Update();
-        } else {
-            impostorScript.Quality = 1;
-            impostorScript.Update();
-        }
-    }
 }

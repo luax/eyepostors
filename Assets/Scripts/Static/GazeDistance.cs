@@ -42,19 +42,20 @@ public class GazeDistance : Singleton<GazeDistance>
             gazePoint = gazePointProvider.GetLastGazePoint(Settings.gazePointType);
             gazePoint2D = gazePoint.GUI;
         }
-
+        gazePoint2D.z = 0;
         cPos = Settings.cameraTransform.position;
     }
 
-    public float CalculateDistance(GameObject gameObject)
+    public LOD CalculateLOD(GameObject gameObject)
     {
         if (!gameObject.renderer.isVisible) {
-            return float.MaxValue;
+            return LOD.Minimal;
         }
 
         if (Settings.triggerOption == TriggerOption.Gaze) {
             if (!gazePoint.IsValid) {
-                return float.MaxValue;
+                //return float.MaxValue;
+                // TODO
             }
         }
 
@@ -65,15 +66,32 @@ public class GazeDistance : Singleton<GazeDistance>
         Vector3 tPos = gameObject.transform.position;
         float distance = Vector3.Distance(tPos, cPos);
 
-        if (distance < Settings.worldMinDistance) {
-            return 0f;
+        if (distance > Settings.Distance.worldMaximum) {
+            return LOD.Minimal;
         }
 
-        if (distance > Settings.worldMaxDistance) {
-            return float.MaxValue;
+        if (distance > Settings.Distance.worldMedium) {
+            return LOD.Low;
         }
+
+        if (distance < Settings.Distance.worldMinimum) {
+            return LOD.High;
+        }
+
+
+        //if (Vector2.Distance(Camera.main.WorldToScreenPoint(tPos), gazePoint2D) / Settings.diagonalLength > 0.3f) {
+        //    return LOD.Medium;
+        //}
+
         BoundsToScreenRect(gameObject.renderer.bounds);
-        return DistanceToRectangle() / Settings.diagonalLength;
+        distance = DistanceToRectangle() / Settings.diagonalLength;
+
+        if (distance <= Settings.Distance.highestLOD) {
+            return LOD.High;
+        } else {
+            return LOD.Medium;
+        }
+
     }
 
     private float DistanceToRectangle()

@@ -11,14 +11,13 @@ public enum LOD
 
 public class CharacterGazeLOD : MonoBehaviour
 {
-
     public GameObject impostor;
     public GameObject characterMesh;
     private CharacterAnimation characterAnimation;
     private LOD currentLOD;
     private float coolDown;
 
-    public void Awake()
+    public void Start()
     {
         characterAnimation = gameObject.GetComponent<CharacterAnimation>();
         characterMesh.SetActive(false);
@@ -31,46 +30,34 @@ public class CharacterGazeLOD : MonoBehaviour
             return;
         }
 
-        float distance = 0;
+        LOD lod;
 
         if (impostor.activeSelf) {
-            distance = GazeDistance.Instance.CalculateDistance(impostor);
+            lod = GazeDistance.Instance.CalculateLOD(impostor);
         } else {
-            distance = GazeDistance.Instance.CalculateDistance(characterMesh);
+            lod = GazeDistance.Instance.CalculateLOD(characterMesh);
         }
 
-        SetLOD(GetLOD(distance));
-    }
-
-    private void SetLOD(LOD lod)
-    {
         if (currentLOD == lod) {
             return;
         }
+
         if (lod == LOD.High) {
             SetCoolDown();
         }
-        characterAnimation.SetQuality(lod);
+
+        characterAnimation.SetLOD(lod);
+
         currentLOD = lod;
     }
 
     private void SetCoolDown()
     {
-        coolDown = Settings.cooldownTime;
+        coolDown = Settings.LODcooldownTime;
     }
 
     private bool CoolDown()
     {
         return (coolDown -= Time.deltaTime) > 0;
-    }
-
-    private LOD GetLOD(float distance)
-    {   
-        if (distance < Settings.gazeDistanceHigh) {
-            return LOD.High;
-        } else if (distance < Settings.gazeDistanceMedium) {
-            return LOD.Medium;
-        }
-        return LOD.Low;
     }
 }

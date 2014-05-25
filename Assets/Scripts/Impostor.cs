@@ -3,11 +3,11 @@ using System.Collections;
 
 public class Impostor : MonoBehaviour
 {
-    public bool OutOfRange { get; set; }
     public int ShirtColor { get; set; }
-    public int Quality { get; set; }
     public int updateAnimationFrameCount = 2;
     public int updateRotationFrameCount = 5;
+
+    private int quality;
     private int frameRotation;
     private int frameAnimation;
     private Transform impostorTransform;
@@ -40,14 +40,12 @@ public class Impostor : MonoBehaviour
         };
         int[] triangles = new int[]{2, 1, 0, 3, 0, 1}; // rotate quad faces
         quad.triangles = triangles;
+        quality = Materials.LowQuality;
         SetMaterial(0, 0);
     }
     
     public void Update()
     {
-        if (OutOfRange) {
-            return;
-        }
         if (frameRotation >= updateRotationFrameCount) {
             frameRotation = 0;
             UpdateRotation();
@@ -60,7 +58,7 @@ public class Impostor : MonoBehaviour
         frameRotation++;
         frameAnimation++;
     }
-    
+
     private void LookAtCamera()
     {
         impostorTransform.LookAt(Settings.cameraTransform.position);
@@ -81,6 +79,15 @@ public class Impostor : MonoBehaviour
             currentAngleIndexX = indexX;
             currentAngleIndexY = indexY;
         }
+    }
+
+    public void UpdateMaterial(int q)
+    {
+        if (quality == q) {
+            return;
+        }
+        quality = q;
+        SetMaterial(currentAngleIndexX, currentAngleIndexY);
     }
     
     private int GetIndexX(Vector3 cameraToObject)
@@ -130,6 +137,6 @@ public class Impostor : MonoBehaviour
     
     private void SetMaterial(int indexX, int indexY)
     {
-        impostorRenderer.sharedMaterial = Materials.GetMaterial(ShirtColor, indexX, indexY, Quality);
+        impostorRenderer.sharedMaterial = Materials.GetMaterial(ShirtColor, indexX, indexY, quality);
     }
 }
