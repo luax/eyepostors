@@ -10,7 +10,6 @@ public class Impostor : MonoBehaviour
     private int frameAnimation;
     private Transform impostorTransform;
     private Transform parentTransform;
-    private Transform cameraTransform;
     private Renderer impostorRenderer;
     private CharacterGazeLOD characterGazeLOD;
     private Mesh quad;
@@ -27,7 +26,6 @@ public class Impostor : MonoBehaviour
     {
         
         impostorTransform = transform;
-        cameraTransform = Camera.main.transform;
         parentTransform = impostorTransform.parent;
         impostorRenderer = renderer;
         characterGazeLOD = transform.parent.GetComponent<CharacterGazeLOD>();
@@ -68,7 +66,7 @@ public class Impostor : MonoBehaviour
 
     private void LookAtCamera()
     {
-        impostorTransform.LookAt(cameraTransform.position);
+        impostorTransform.LookAt(Settings.cameraTransform.position);
         impostorTransform.Rotate(quadRotation);
     }
 
@@ -79,7 +77,7 @@ public class Impostor : MonoBehaviour
 
     public void UpdateRotation()
     {
-        Vector3 cameraToObject = cameraTransform.position - parentTransform.position;
+        Vector3 cameraToObject = Settings.cameraTransform.position - parentTransform.position;
         int indexX = GetIndexX(cameraToObject);
         int indexY = GetIndexY(cameraToObject);
         if (indexY != currentAngleIndexY || indexX != currentAngleIndexX) {

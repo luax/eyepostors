@@ -40,6 +40,7 @@ public class Utils : Singleton<Utils>
     public void LockPlayer(bool b)
     {
         GameObject player = GameObject.FindGameObjectWithTag("Player");
+        // TODO findObjectsOfType
         if (player == null)
         {
             return;

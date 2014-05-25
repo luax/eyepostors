@@ -11,7 +11,6 @@ public class CharacterGazeLOD : MonoBehaviour
 	public GameObject characterMesh;
 
 	private Transform myTransform;
-	private Transform cameraTransform;
 	private SkinnedMeshRenderer characterRenderer;
 	private LOD currentLOD;
 	private Impostor impostorScript;
@@ -28,7 +27,6 @@ public class CharacterGazeLOD : MonoBehaviour
 	public void Awake ()
 	{
 		myTransform = transform;
-		cameraTransform = Camera.main.transform;
 		characterRenderer = characterMesh.GetComponent<SkinnedMeshRenderer> ();
 		impostorScript = impostor.GetComponent<Impostor> ();
 		animator = characterMesh.GetComponent<Animator> ();

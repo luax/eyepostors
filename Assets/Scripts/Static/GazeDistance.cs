@@ -13,8 +13,6 @@ public class GazeDistance : Singleton<GazeDistance>
     private Vector3 gazePoint2D;
     private Vector3 cPos;
     private Rect rect;
-    private Transform cameraTransform;
-    private Camera mainCamera;
 
     private GameObject latestObject;
             	
@@ -26,8 +24,6 @@ public class GazeDistance : Singleton<GazeDistance>
     public void Start()
     {
         rect = new Rect();
-        cameraTransform = Camera.main.transform;
-        mainCamera = Camera.main;
     }
 
     public void OnEnable()
@@ -52,7 +48,7 @@ public class GazeDistance : Singleton<GazeDistance>
             gazePoint2D = gazePoint.GUI;
         }
 
-        cPos = cameraTransform.position;
+        cPos = Settings.cameraTransform.position;
     }
 
     public float CalculateDistance(GameObject gameObject)
@@ -71,7 +67,7 @@ public class GazeDistance : Singleton<GazeDistance>
         latestObject = gameObject;
 #endif
 
-        Vector3 tPos = gameObject.transform.position;
+        Vector3 tPos = gameObject.transform.position;        
         cPos.y = tPos.y = 0;
 
         if (MuchClose(ref tPos)) {
@@ -107,7 +103,7 @@ public class GazeDistance : Singleton<GazeDistance>
 #if DEBUG
     public void OnGUI()
     {
-        if (latestObject.renderer != null && latestObject.renderer.isVisible)
+        if (latestObject != null && latestObject.renderer != null && latestObject.renderer.isVisible)
         {
             //GUI.Box(ProjectedRect.GetProjectedRect(latestObject, Camera.main).rect, "Distance from trigger option " + CalculateDistance(latestObject));
             BoundsToScreenRect(latestObject.renderer.bounds);
@@ -151,7 +147,7 @@ public class GazeDistance : Singleton<GazeDistance>
 
     private Vector3 ConvertToScreenSpace(Vector3 p)
     {
-        Vector3 r = mainCamera.WorldToScreenPoint(p);
+        Vector3 r = Camera.main.WorldToScreenPoint(p);
         r.y = Screen.height - r.y;
         return r;
     }
