@@ -34,7 +34,9 @@ void surf (Input IN, inout SurfaceOutput o) {
 		}
 	o.Albedo = c.rgb;
 	o.Alpha = c.a;
-	o.Normal = UnpackNormal(tex2D(_BumpMap, IN.uv_BumpMap));
+	float3 n = UnpackNormal(tex2D(_BumpMap, IN.uv_BumpMap));
+	n.z = -n.z;
+	o.Normal = n;
 }
 ENDCG
 }

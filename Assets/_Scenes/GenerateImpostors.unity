@@ -761,8 +761,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   charTexture: {fileID: 2800000, guid: 4363f6c1d336a49ae9bf5d421d8a08ec, type: 3}
   textureSizeHorizontal: 1024
-  numberOfAngles: 16
-  numberOfFrames: 16
   saveTextures: 1
 --- !u!1 &371756513
 GameObject:
