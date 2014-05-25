@@ -12,7 +12,7 @@ public class Menu : MonoBehaviour
     private int width = 200;
     private int height = 20;
     private int menuOffset = 30;
-    private int items = 2;
+    private int items = 3;
 
     public void Update()
     {
@@ -43,6 +43,11 @@ public class Menu : MonoBehaviour
         {
             Utils.Instance.ToggleGazePoint();
         }
+
+        if (GUI.Button(new Rect(left, (top += menuOffset), width, height), "Exit game")) {
+            Application.Quit();
+        }
+
         GUI.EndGroup();
 
         top = topDefault;
