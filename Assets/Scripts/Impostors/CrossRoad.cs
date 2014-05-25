@@ -4,18 +4,19 @@ using System.Collections.Generic;
 
 public class CrossRoad : MonoBehaviour
 {
-    public int numberOfImpostors = 100;
     public float respawnWidth = 2.5f;
     public GameObject LeftToRightRoad;
     public GameObject TopToBottomRoad;
 
-    private GameObject[] characters;
+    private int numberOfImpostors;
+    private List<GameObject> characters;
     private float characterY;
     private Dictionary<GameObject, Mission> missions;
     private Vector3 leftPosition;
     private Vector3 rightPosition;
     private Vector3 topPosition;
     private Vector3 bottomPosition;
+    private GameObject character;
 
     public enum StartPosition
     {
@@ -50,8 +51,7 @@ public class CrossRoad : MonoBehaviour
 
         public void Handle()
         {
-            if ((time += Time.deltaTime) < travelingTime)
-            {
+            if ((time += Time.deltaTime) < travelingTime) {
                 float fraction = time / travelingTime;
                 character.transform.position = Vector3.Lerp(startPos, missionPos, fraction);
                 character.transform.rotation = Quaternion.LookRotation(missionPos - character.transform.position);
@@ -111,30 +111,67 @@ public class CrossRoad : MonoBehaviour
         }
     }
 
+    IEnumerator UpdateImpostors()
+    {
+        while (true) {
+            if (numberOfImpostors != Settings.numberOfImpostors) {
+                int num = (Settings.numberOfImpostors - numberOfImpostors);
+                if (num < 0) {
+                    RemoveImpostors(Mathf.Abs(num));
+                } else {
+                    AddImpostors(num);
+                }
+                numberOfImpostors = Settings.numberOfImpostors;
+            }
+            yield return new WaitForSeconds(1);
+        }
+    }
+
+
     public void Start()
     {
-        GameObject character = (GameObject)Resources.Load("Character");
+        character = (GameObject)Resources.Load("Character");
         characterY = character.transform.position.y;
 
         Initialize();
 
-        for (int i = 0; i < numberOfImpostors; i++) {
-            GameObject g = (GameObject)Instantiate(character);
-            characters[i] = g;
-            StartPosition s = GetStart(i);
-            g.transform.position = GetRandomPosition(g.transform.position, s);
-            missions.Add(g, new Mission(g, this, s));
-        }
+        AddImpostors(numberOfImpostors);
+
+        StartCoroutine(UpdateImpostors());
     }
 
     private void Initialize()
     {
+        numberOfImpostors = Settings.numberOfImpostors;
         leftPosition = LeftToRightRoad.transform.FindChild("StartPoint").transform.position;
         rightPosition = LeftToRightRoad.transform.FindChild("EndPoint").transform.position;
         topPosition = TopToBottomRoad.transform.transform.FindChild("StartPoint").transform.position;
         bottomPosition = TopToBottomRoad.transform.transform.FindChild("EndPoint").transform.position;
         missions = new Dictionary<GameObject, Mission>();
-        characters = new GameObject[numberOfImpostors];
+        characters = new List<GameObject>(numberOfImpostors);
+    }
+
+    private void RemoveImpostors(int diff)
+    {
+        // TODO: remove on each start position even
+        for (int i = 0; diff > 0 && i < characters.Count; i++) {
+            GameObject character = characters[i];
+            missions.Remove(character);
+            characters.RemoveAt(i);
+            Destroy(character);
+            diff--;
+        }
+    }
+
+    private void AddImpostors(int diff)
+    {
+        for (int i = 0; i < diff; i++) {
+            GameObject g = (GameObject)Instantiate(character);
+            characters.Add(g);
+            StartPosition s = GetStart(i, diff);
+            g.transform.position = GetRandomPosition(g.transform.position, s);
+            missions.Add(g, new Mission(g, this, s));
+        }
     }
 
     public void Update()
@@ -161,7 +198,7 @@ public class CrossRoad : MonoBehaviour
             case StartPosition.Right:
                 p = rightPosition;
                 p.z = Random.Range(rightPosition.z, leftPosition.z);
-                AddOffset(ref p, true);;
+                AddOffset(ref p, true); ;
                 break;
             case StartPosition.Bottom:
                 p = bottomPosition;
@@ -183,13 +220,13 @@ public class CrossRoad : MonoBehaviour
         }
     }
 
-    private StartPosition GetStart(int index)
+    private StartPosition GetStart(int index, int condition)
     {
-        if (index < numberOfImpostors / 4) {
+        if (index < condition / 4) {
             return StartPosition.Left;
-        } else if (index < numberOfImpostors / 2) {
+        } else if (index < condition / 2) {
             return StartPosition.Top;
-        } else if (index < (3 * numberOfImpostors) / 4) {
+        } else if (index < (3 * condition) / 4) {
             return StartPosition.Right;
         } else {
             return StartPosition.Bottom;

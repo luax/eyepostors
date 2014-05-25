@@ -12,12 +12,11 @@ public class Menu : MonoBehaviour
     private int width = 200;
     private int height = 20;
     private int menuOffset = 30;
-    private int items = 3;
+    private int items = 5;
 
     public void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
+        if (Input.GetKeyDown(KeyCode.Escape)) {
             showMenu = !showMenu;
             Utils.Instance.Pause(showMenu);
         }
@@ -25,8 +24,7 @@ public class Menu : MonoBehaviour
 
     protected virtual void OnGUI()
     {
-        if (showMenu)
-        {
+        if (showMenu) {
             DrawMenu();
         }
     }
@@ -39,13 +37,20 @@ public class Menu : MonoBehaviour
         GUI.BeginGroup(new Rect(Screen.width / 2 - 100, Screen.height / 2 - 200, Screen.width, Screen.height));
         GUI.Box(new Rect(10, 10, 220, items * menuOffset), "Menu");
 
-        if (GUI.Button(new Rect(left, (top += menuOffset), width, height), "Display gaze point: " + Utils.Instance.GetGazePointStatus()))
-        {
+        if (GUI.Button(new Rect(left, (top += menuOffset), width, height), "Display gaze point: " + Utils.Instance.GetGazePointStatus())) {
             Utils.Instance.ToggleGazePoint();
         }
 
         if (GUI.Button(new Rect(left, (top += menuOffset), width, height), "Exit game")) {
             Application.Quit();
+        }
+
+        GUI.Label(new Rect(left, (top += menuOffset), width, height), "Number of impostors: " + Settings.numberOfImpostors);
+       
+        string text = GUI.TextField(new Rect(left, (top += menuOffset), width, height), Settings.numberOfImpostors.ToString());
+        int number;
+        if (int.TryParse(text, out number) && number >= Settings.minImpostors && number <= Settings.maxImpostors) {
+            Settings.numberOfImpostors = number;
         }
 
         GUI.EndGroup();

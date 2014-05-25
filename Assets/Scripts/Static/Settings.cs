@@ -27,12 +27,20 @@ public static class Settings
     public const int numberOfFrames = 16;
     public const int numberOfColors = 15;
 
+    public const int minImpostors = 1;
+    public const int defImpostors = 10;
+    public const int maxImpostors = 50000;
+    public static int numberOfImpostors;
+
+    // Camera
     public static Transform cameraTransform;
 
     static Settings() {
         if (Camera.main != null) {
             cameraTransform = Camera.main.transform;
         }
+        numberOfImpostors = defImpostors;
     }
+
 }
 
