@@ -4,6 +4,7 @@ using System.Collections;
 public class Impostor : MonoBehaviour
 {
     public int ShirtColor { get; set; }
+    public int Quality { get; set; }
     public int updateAnimationFrameCount = 2;
     public int updateRotationFrameCount = 5;
     private int frameRotation;
@@ -24,7 +25,6 @@ public class Impostor : MonoBehaviour
 
     void Start()
     {
-        
         impostorTransform = transform;
         parentTransform = impostorTransform.parent;
         impostorRenderer = renderer;
@@ -133,6 +133,6 @@ public class Impostor : MonoBehaviour
 
     private void SetMaterial(int indexX, int indexY)
     {
-        impostorRenderer.sharedMaterial = Materials.GetMaterial(ShirtColor, indexX, indexY);
+        impostorRenderer.sharedMaterial = Materials.GetMaterial(ShirtColor, indexX, indexY, Quality);
     }
 }

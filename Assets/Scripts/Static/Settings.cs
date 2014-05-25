@@ -15,7 +15,7 @@ public static class Settings
 
     // Character gaze LOD
     public const float gazeDistanceHigh = 50f;
-    public const float gazeDistanceStandard = 180f;
+    public const float gazeDistanceMedium = 180f;
     public const float cooldownTime = 0.5f;
 
     // Gaze distance

@@ -74,6 +74,9 @@ public class GazeDistance : Singleton<GazeDistance>
             return 0f;
         }
 
+        if (MuchFun(ref tPos)) {
+            return Settings.worldMaxDistance - 1;
+        }
         if (MaxDistance(ref tPos)) {
             return float.MaxValue;
         }
@@ -81,6 +84,11 @@ public class GazeDistance : Singleton<GazeDistance>
         BoundsToScreenRect(gameObject.renderer.bounds);
         //Rect rect = ProjectedRect.GetProjectedRect(gameObject, Camera.main).rect;
         return DistanceToRectangle();
+    }
+    private bool MuchFun(ref Vector3 objectPosition)
+    {
+        float dist = Vector3.Distance(cPos, objectPosition);
+        return dist > Settings.worldMinDistance && dist < Settings.worldMaxDistance;
     }
 
     private bool MuchClose(ref Vector3 objectPosition)
@@ -120,21 +128,21 @@ public class GazeDistance : Singleton<GazeDistance>
         Vector3 e = b.extents;
 
         // Counter clockwise starting at top most left vertex
-        vertices[0] = c + e;
-        vertices[1] = new Vector3(c.x + e.x, c.y - e.y, c.z + e.z);
-        vertices[2] = new Vector3(c.x - e.x, c.y - e.y, c.z + e.z);
-        vertices[3] = new Vector3(c.x - e.x, c.y + e.y, c.z + e.z);
-        vertices[4] = new Vector3(c.x + e.x, c.y + e.y, c.z - e.z);
-        vertices[5] = new Vector3(c.x + e.x, c.y - e.y, c.z - e.z);
-        vertices[6] = new Vector3(c.x - e.x, c.y - e.y, c.z - e.z);
-        vertices[7] = new Vector3(c.x - e.x, c.y + e.y, c.z - e.z);
+        vertices [0] = c + e;
+        vertices [1] = new Vector3(c.x + e.x, c.y - e.y, c.z + e.z);
+        vertices [2] = new Vector3(c.x - e.x, c.y - e.y, c.z + e.z);
+        vertices [3] = new Vector3(c.x - e.x, c.y + e.y, c.z + e.z);
+        vertices [4] = new Vector3(c.x + e.x, c.y + e.y, c.z - e.z);
+        vertices [5] = new Vector3(c.x + e.x, c.y - e.y, c.z - e.z);
+        vertices [6] = new Vector3(c.x - e.x, c.y - e.y, c.z - e.z);
+        vertices [7] = new Vector3(c.x - e.x, c.y + e.y, c.z - e.z);
 
-        Vector3 min = ConvertToScreenSpace(vertices[0]);
-        Vector3 max = ConvertToScreenSpace(vertices[0]);
+        Vector3 min = ConvertToScreenSpace(vertices [0]);
+        Vector3 max = ConvertToScreenSpace(vertices [0]);
         for (int i = 1; i < vertices.Length; i++) {
-            vertices[i] = ConvertToScreenSpace(vertices[i]);
-            min = Vector3.Min(min, vertices[i]);
-            max = Vector3.Max(max, vertices[i]);
+            vertices [i] = ConvertToScreenSpace(vertices [i]);
+            min = Vector3.Min(min, vertices [i]);
+            max = Vector3.Max(max, vertices [i]);
         }
 
         rect.xMin = min.x;
