@@ -65,14 +65,19 @@ Tex text text";
 
     private void Disable(bool lol)
     {
-        Settings.cameraTransform = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>().transform;
         startCamera.GetComponent<Camera>().enabled = false;
+        startCamera.tag = "";
+        Settings.cameraTransform = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>().transform;
         Utils.Instance.SetGazePoint(false);
         LockCursor(true);
         Destroy(startCamera);
         Destroy(gameObject);
     }
 
+    private void SetPosition(GameObject g)
+    {
+        g.transform.position = startCamera.transform.position;
+    }
 
     private void LockCursor(bool enabled)
     {
@@ -80,12 +85,6 @@ Tex text text";
         foreach (LockCursor l in lockCursor) {
             l.enabled = enabled;
         }
-    }
-
-    private void SetPosition(GameObject g)
-    {
-        g.transform.position = startCamera.transform.position;
-        g.transform.rotation = startCamera.transform.rotation;
     }
 
 }
