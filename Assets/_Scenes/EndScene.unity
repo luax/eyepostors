@@ -18,7 +18,7 @@ RenderSettings:
   m_FogDensity: .00999999978
   m_LinearFogStart: 0
   m_LinearFogEnd: 300
-  m_AmbientLight: {r: .852941155, g: .852941155, b: .852941155, a: 1}
+  m_AmbientLight: {r: .25, g: .25, b: .25, a: 1}
   m_SkyboxMaterial: {fileID: 2100000, guid: a2126534b3a11b34e977105bd9e3cc03, type: 2}
   m_HaloStrength: .5
   m_FlareStrength: 1
@@ -683,7 +683,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b5c2c9d2d4800c94a812bd3766ba7e62, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  numberOfImpostors: 4000
   respawnWidth: 20
   LeftToRightRoad: {fileID: 517148862}
   TopToBottomRoad: {fileID: 370229451}
@@ -920,7 +919,7 @@ Light:
   m_SpotAngle: 30
   m_CookieSize: 10
   m_Shadows:
-    m_Type: 0
+    m_Type: 1
     m_Resolution: 3
     m_Strength: 1
     m_Bias: .0500000007
@@ -993,7 +992,6 @@ GameObject:
   - 114: {fileID: 1490539804}
   - 114: {fileID: 1490539803}
   - 114: {fileID: 1490539802}
-  - 114: {fileID: 1490539801}
   m_Layer: 0
   m_Name: FreeViewCamera
   m_TagString: MainCamera
@@ -1001,18 +999,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1490539801
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 11400008, guid: 3346acf6fbe661f4891d90eed61c6e9c,
-    type: 2}
-  m_PrefabInternal: {fileID: 1565314783}
-  m_GameObject: {fileID: 1490539800}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a4543ddbff5a51542b7b7160b21b0405, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &1490539802
 MonoBehaviour:
   m_ObjectHideFlags: 0
