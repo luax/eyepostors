@@ -1,42 +1,32 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+public enum LOD
+{
+    High,
+    Medium,
+    Low,
+    Minimal
+}
+
 public class CharacterGazeLOD : MonoBehaviour
 {
-    public float NormalizedTime { get; set; }
 
     public GameObject impostor;
     public GameObject characterMesh;
-
-    private Transform myTransform;
-    private SkinnedMeshRenderer characterRenderer;
+    private CharacterAnimation characterAnimation;
     private LOD currentLOD;
-    private Impostor impostorScript;
     private float coolDown;
-    private Animator animator;
-
-    private enum LOD
-    {
-        High,
-        Medium,
-        Low
-    }
 
     public void Awake()
     {
-        myTransform = transform;
-        characterRenderer = characterMesh.GetComponent<SkinnedMeshRenderer>();
-        impostorScript = impostor.GetComponent<Impostor>();
-        animator = characterMesh.GetComponent<Animator>();
+        characterAnimation = gameObject.GetComponent<CharacterAnimation>();
         characterMesh.SetActive(false);
         impostor.SetActive(true);
     }
 
     public void Update()
     {
-        NormalizedTime += Time.deltaTime;
-        NormalizedTime = NormalizedTime % 1.0f;
-
         if (CoolDown()) {
             return;
         }
@@ -59,19 +49,20 @@ public class CharacterGazeLOD : MonoBehaviour
         }
 
         SetCoolDown();
-
+        characterAnimation.EnableAnimation();
         switch (lod) {
             case LOD.High:
-                SetImpostor(false, LOD.Medium);
-                SetCharacterMesh(true);
+                characterAnimation.SetQuality(LOD.High);
                 break;
             case LOD.Medium:
-                SetCharacterMesh(false);
-                SetImpostor(true, LOD.Medium);
+                characterAnimation.SetQuality(LOD.Medium);
                 break;
             case LOD.Low:
-                SetCharacterMesh(false);
-                SetImpostor(true, LOD.Low);
+                characterAnimation.SetQuality(LOD.Low);
+                break;
+            case LOD.Minimal:
+                characterAnimation.SetQuality(LOD.Minimal);
+                //TODO
                 break;
         }
 
@@ -90,41 +81,11 @@ public class CharacterGazeLOD : MonoBehaviour
 
     private LOD GetLOD(float distance)
     {   
-        Debug.Log(distance);
         if (distance < Settings.gazeDistanceHigh) {
-            Debug.Log("HIGH");
             return LOD.High;
         } else if (distance < Settings.gazeDistanceMedium) {
-            Debug.Log("MEDIUM");
             return LOD.Medium;
         }
-        Debug.Log("LOW");
         return LOD.Low;
     }
-
-    private void SetCharacterMesh(bool activate)
-    {
-        if (!activate) {
-            NormalizedTime = animator.GetCurrentAnimatorStateInfo(0).normalizedTime - 
-                Mathf.Floor(animator.GetCurrentAnimatorStateInfo(0).normalizedTime);
-        }
-        characterMesh.SetActive(activate);
-        if (activate) {   
-            animator.Play("WalkForward", 0, NormalizedTime);
-        }
-
-    }
-
-    private void SetImpostor(bool activate, LOD quality)
-    {
-        impostor.SetActive(activate);
-        if (activate && quality == LOD.Low) {
-            impostorScript.Quality = 0;
-            impostorScript.Update();
-        } else if (activate) {
-            impostorScript.Quality = 1;
-            impostorScript.Update();
-        }
-    }
-
 }

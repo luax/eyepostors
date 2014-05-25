@@ -28,6 +28,7 @@ GameObject:
   - 4: {fileID: 400002}
   - 114: {fileID: 11400002}
   - 114: {fileID: 11400006}
+  - 114: {fileID: 11400004}
   m_Layer: 0
   m_Name: Character
   m_TagString: Character
@@ -2570,9 +2571,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02744a539bf292e488a87206c28709b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  numberOfFrames: 15
-  numberOfAngles: 15
-  shirtColor: {r: 0, g: 0, b: 0, a: 0}
+  updateAnimationFrameCount: 2
+  updateRotationFrameCount: 5
 --- !u!114 &11400002
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2584,8 +2584,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 990a6f5d78133d24d92a007824787b0e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  high: {fileID: 4300000, guid: e07c802f30a87f6489daef871c57df79, type: 3}
-  medium: {fileID: 4300000, guid: e07c802f30a87f6489daef871c57df79, type: 3}
+  impostor: {fileID: 100000}
+  characterMesh: {fileID: 100186}
+--- !u!114 &11400004
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100002}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 97d34d3b68d697947a8ad6a587a0d7ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
   impostor: {fileID: 100000}
   characterMesh: {fileID: 100186}
 --- !u!114 &11400006
@@ -2599,7 +2610,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c70c24cae2fd5445dadc7ebbc6d0468b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shirtColor: {r: 0, g: 0, b: 0, a: 0}
+  shirtColor: 0
   characterMesh: {fileID: 100186}
   impostor: {fileID: 100000}
 --- !u!137 &13700000

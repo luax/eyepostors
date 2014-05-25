@@ -3,6 +3,7 @@ using System.Collections;
 
 public class Impostor : MonoBehaviour
 {
+    public bool OutOfRange { get; set; }
 	public int ShirtColor { get; set; }
 	public int Quality { get; set; }
 	public int updateAnimationFrameCount = 2;
@@ -43,9 +44,12 @@ public class Impostor : MonoBehaviour
 		quad.triangles = triangles;
 		SetMaterial(0, 0);
 	}
-    
+
 	public void Update()
 	{
+		if (OutOfRange) {
+            return;
+        }
 		if (frameRotation >= updateRotationFrameCount) {
 			frameRotation = 0;
 			UpdateRotation();
@@ -63,11 +67,11 @@ public class Impostor : MonoBehaviour
 	{
 		impostorTransform.LookAt(cameraTransform.position);
 	}
-    
-	public void UpdateAnimation()
-	{
-		SetAnimationPercentage(characterGazeLOD.NormalizedTime);
-	}
+
+    public void UpdateAnimation()
+    {
+        SetAnimationPercentage(characterAnimation.NormalizedTime);
+    }
 
 	public void UpdateRotation()
 	{
