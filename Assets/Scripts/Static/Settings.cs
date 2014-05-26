@@ -10,7 +10,7 @@ public enum TriggerOption
 public static class Settings
 {
     // Eye tracking options
-    public const TriggerOption triggerOption = TriggerOption.Mouse;
+    public const TriggerOption triggerOption = TriggerOption.Gaze;
     public const EyeXGazePointType gazePointType = EyeXGazePointType.GazeLightlyFiltered;
 
     // Distance and level of detail settings

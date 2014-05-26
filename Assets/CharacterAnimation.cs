@@ -37,7 +37,7 @@ public class CharacterAnimation : MonoBehaviour
     public void Update()
     {
         NormalizedTime += Time.deltaTime;
-        NormalizedTime = NormalizedTime % 1.0f;
+        NormalizedTime = NormalizedTime - Mathf.Floor(NormalizedTime);
     }
 
     private void Impostor(LOD lod)

@@ -506,6 +506,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc1bba228e6764f3c932e03b4d9b83e8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  updateFrequency: 1
   font: {fileID: 12800000, guid: 8bdfbdec2ab1147c0a47227906035304, type: 3}
 --- !u!4 &1122044170
 Transform:
@@ -662,7 +663,7 @@ Light:
   m_SpotAngle: 30
   m_CookieSize: 10
   m_Shadows:
-    m_Type: 1
+    m_Type: 0
     m_Resolution: 3
     m_Strength: 1
     m_Bias: .0500000007
@@ -778,6 +779,15 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 2a5aa49c491c74cfba823dd0e49aea3b, type: 2}
       propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400000, guid: 2a5aa49c491c74cfba823dd0e49aea3b, type: 2}
+      propertyPath: font
+      value: 
+      objectReference: {fileID: 12800000, guid: 8bdfbdec2ab1147c0a47227906035304,
+        type: 3}
+    - target: {fileID: 11400000, guid: 2a5aa49c491c74cfba823dd0e49aea3b, type: 2}
+      propertyPath: updateFrequency
       value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []

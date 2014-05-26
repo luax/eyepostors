@@ -3,13 +3,15 @@ using System.Collections;
 
 public class FPSDisplay : MonoBehaviour
 {
+    public int FramesPerSec { get; protected set; }
+    public float updateFrequency = 0.5f;
     public Font font;
-    private float deltaTime = 0.0f;
+
+    private string text;
     private GUIStyle style;
     private Rect pos;
-    private string text;
-    
-    void Start()
+
+    private void Start()
     {
         int w = Screen.width, h = Screen.height;
         style = new GUIStyle();
@@ -18,15 +20,22 @@ public class FPSDisplay : MonoBehaviour
         style.font = font;
         style.normal.textColor = new Color(1, 1, 1, 1.0f);
         pos = new Rect(5, 5, w, h * 2 / 100);
+        StartCoroutine(FPS());
     }
-    
-    void Update()
+
+    private IEnumerator FPS()
     {
-        deltaTime += (Time.deltaTime - deltaTime) * 0.1f;
-        float fps = 1.0f / deltaTime;
-        text = string.Format("FPS: {0:0.0}", fps);
+        for (;;) {
+            int lastFrameCount = Time.frameCount;
+            float lastTime = Time.realtimeSinceStartup;
+            yield return new WaitForSeconds(updateFrequency);
+            float timeSpan = Time.realtimeSinceStartup - lastTime;
+            int frameCount = Time.frameCount - lastFrameCount;
+            
+            FramesPerSec = Mathf.RoundToInt(frameCount / timeSpan);
+            text = FramesPerSec.ToString() + " fps";
+        }
     }
-    
     void OnGUI()
     {
         GUI.Label(pos, text, style);
