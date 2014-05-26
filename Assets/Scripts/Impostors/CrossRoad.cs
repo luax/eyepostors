@@ -5,8 +5,7 @@ using System.Collections.Generic;
 public class CrossRoad : MonoBehaviour
 {
     public float respawnWidth = 2.5f;
-    public GameObject LeftToRightRoad;
-    public GameObject TopToBottomRoad;
+    public GameObject positions;
 
     private int numberOfImpostors;
     private List<GameObject> characters;
@@ -43,10 +42,8 @@ public class CrossRoad : MonoBehaviour
             cr = r;
             start = s;
             transform = g.transform;
-
-            startPos = transform.position;
-            GetMission();
-            Reset();
+            Respawn(true);
+            Values();
         }
 
         public void Handle()
@@ -54,15 +51,13 @@ public class CrossRoad : MonoBehaviour
             if ((time += Time.deltaTime) < travelingTime) {
                 float fraction = time / travelingTime;
                 transform.position = Vector3.Lerp(startPos, missionPos, fraction);
-                transform.rotation = Quaternion.LookRotation(direction);
             } else {
-                Respawn();
-                GetMission();
-                Reset();
+                Respawn(false);
+                Values();
             }
         }
 
-        private void Reset()
+        private void Values()
         {
             time = 0;
             speed = Random.Range(1f, 2f);
@@ -70,44 +65,63 @@ public class CrossRoad : MonoBehaviour
             missionPos.y = cr.characterY;
             travelingTime = Vector3.Distance(startPos, missionPos) / speed;
             direction = missionPos - transform.position;
+            direction.y = 0;
+            transform.rotation = Quaternion.LookRotation(direction);
         }
 
-        private void Respawn()
+        private void Respawn(bool random)
         {
-            SetPosition(true);
-        }
-
-        private void GetMission()
-        {
-            SetPosition(false);
-        }
-
-        private void SetPosition(bool s)
-        {
-            Vector3 p = Vector3.zero;
+            // AddOffset true is for x-led
             switch (start) {
                 case StartPosition.Left:
-                    p = s ? cr.leftPosition : cr.rightPosition;
-                    cr.AddOffset(ref p, true);
+                    startPos = cr.leftPosition;
+                    missionPos = cr.rightPosition;
+                    if (random) {
+                        startPos.x = Random.Range(cr.leftPosition.x, cr.rightPosition.x);
+                    }
+
+                    AddOffset(ref startPos, false);
+                    AddOffset(ref missionPos, false);
                     break;
                 case StartPosition.Top:
-                    p = s ? cr.topPosition : cr.bottomPosition;
-                    cr.AddOffset(ref p, false);
+                    startPos = cr.topPosition;
+                    missionPos = cr.bottomPosition;
+                    if (random) {
+                        startPos.z = Random.Range(cr.bottomPosition.z, cr.topPosition.z);
+                    }
+                    AddOffset(ref startPos, true);
+                    AddOffset(ref missionPos, true);
                     break;
                 case StartPosition.Right:
-                    p = s ? cr.rightPosition : cr.leftPosition;
-                    cr.AddOffset(ref p, true);
+                    startPos = cr.rightPosition;
+                    missionPos = cr.leftPosition;
+                    if (random) {
+                        startPos.x = Random.Range(cr.leftPosition.x, cr.rightPosition.x);
+                    }
+                    AddOffset(ref startPos, false);
+                    AddOffset(ref missionPos, false);
                     break;
                 case StartPosition.Bottom:
-                    p = s ? cr.bottomPosition : cr.topPosition;
-                    cr.AddOffset(ref p, false);
+                    startPos = cr.bottomPosition;
+                    missionPos = cr.topPosition;
+                    if (random) {
+                        startPos.z = Random.Range(cr.bottomPosition.z, cr.topPosition.z);
+                    }
+                    AddOffset(ref startPos, true);
+                    AddOffset(ref missionPos, true);
                     break;
             }
+            startPos.y = cr.characterY;
+            missionPos.y = cr.characterY;
+        }
 
-            if (s) {
-                startPos = p;
+        private void AddOffset(ref Vector3 point, bool x)
+        {
+            float value = Random.Range(-cr.respawnWidth, cr.respawnWidth);
+            if (x) {
+                point.x += value;
             } else {
-                missionPos = p;
+                point.z += value;
             }
         }
     }
@@ -144,10 +158,10 @@ public class CrossRoad : MonoBehaviour
     private void Initialize()
     {
         numberOfImpostors = Settings.numberOfImpostors;
-        leftPosition = LeftToRightRoad.transform.FindChild("StartPoint").transform.position;
-        rightPosition = LeftToRightRoad.transform.FindChild("EndPoint").transform.position;
-        topPosition = TopToBottomRoad.transform.transform.FindChild("StartPoint").transform.position;
-        bottomPosition = TopToBottomRoad.transform.transform.FindChild("EndPoint").transform.position;
+        leftPosition = positions.transform.FindChild("LeftPosition").transform.position;
+        rightPosition = positions.transform.FindChild("RightPosition").transform.position;
+        topPosition = positions.transform.transform.FindChild("TopPosition").transform.position;
+        bottomPosition = positions.transform.transform.FindChild("BottomPosition").transform.position;
         missions = new Dictionary<GameObject, Mission>();
         characters = new List<GameObject>(numberOfImpostors);
     }
@@ -170,7 +184,6 @@ public class CrossRoad : MonoBehaviour
             GameObject g = (GameObject)Instantiate(character);
             characters.Add(g);
             StartPosition s = GetStart(i, num);
-            g.transform.position = GetRandomPosition(g.transform.position, s);
             missions.Add(g, new Mission(g, this, s));
         }
     }
@@ -179,45 +192,6 @@ public class CrossRoad : MonoBehaviour
     {
         foreach (GameObject g in characters) {
             missions[g].Handle();
-        }
-    }
-
-    private Vector3 GetRandomPosition(Vector3 pos, StartPosition s)
-    {
-        Vector3 p = pos;
-        switch (s) {
-            case StartPosition.Left:
-                p = leftPosition;
-                p.z = Random.Range(rightPosition.z, leftPosition.z);
-                AddOffset(ref p, true);
-                break;
-            case StartPosition.Top:
-                p = topPosition;
-                p.x = Random.Range(bottomPosition.x, topPosition.x);
-                AddOffset(ref p, false);
-                break;
-            case StartPosition.Right:
-                p = rightPosition;
-                p.z = Random.Range(rightPosition.z, leftPosition.z);
-                AddOffset(ref p, true); ;
-                break;
-            case StartPosition.Bottom:
-                p = bottomPosition;
-                p.x = Random.Range(bottomPosition.x, topPosition.x);
-                AddOffset(ref p, false);
-                break;
-        }
-        p.y = characterY;
-        return p;
-    }
-
-    private void AddOffset(ref Vector3 point, bool x)
-    {
-        float value = Random.Range(-respawnWidth, respawnWidth);
-        if (x) {
-            point.x += value;
-        } else {
-            point.z += value;
         }
     }
 
