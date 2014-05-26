@@ -33,7 +33,7 @@ public class FPSDisplay : MonoBehaviour
             int frameCount = Time.frameCount - lastFrameCount;
             
             FramesPerSec = Mathf.RoundToInt(frameCount / timeSpan);
-            text = FramesPerSec.ToString() + " fps";
+            text = "~ " + FramesPerSec.ToString() + " fps";
         }
     }
     void OnGUI()
