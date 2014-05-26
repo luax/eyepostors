@@ -7,7 +7,7 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: Wall
-  m_Shader: {fileID: 4, guid: 0000000000000000f000000000000000, type: 0}
+  m_Shader: {fileID: 9, guid: 0000000000000000f000000000000000, type: 0}
   m_ShaderKeywords: []
   m_CustomRenderQueue: -1
   m_SavedProperties:
@@ -31,18 +31,18 @@ Material:
         first:
           name: _ParallaxMap
         second:
-          m_Texture: {fileID: 2800000, guid: b73ca8fa2ca314e09a48e6493ff0d91c, type: 3}
+          m_Texture: {fileID: 2800000, guid: 724d3059293099f4493d5b5f9109482c, type: 3}
           m_Scale: {x: 75, y: 75}
           m_Offset: {x: 0, y: 0}
     m_Floats:
       data:
         first:
           name: _Shininess
-        second: .078125
+        second: .0545551963
       data:
         first:
           name: _Parallax
-        second: .00499999989
+        second: .0264285728
     m_Colors:
       data:
         first:
