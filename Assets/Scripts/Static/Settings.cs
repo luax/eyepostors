@@ -21,7 +21,7 @@ public static class Settings
         public const float lowestLOD = 2f;
         public const float minimalLOD = 3f;
 
-        public const float worldMaximum = 40f;
+        public const float worldMaximum = 100f;
         public const float worldMedium = 20f;
         public const float worldMinimum = 6f;
     }

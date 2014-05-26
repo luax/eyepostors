@@ -22,7 +22,9 @@ public class Impostor : MonoBehaviour
     private Vector3 quadRotation;
     private const int RIGHT = 0;
     private const int LEFT = 1;
-    
+
+    private bool minimalLOD;
+
     void Start()
     {
         impostorTransform = transform;
@@ -45,6 +47,10 @@ public class Impostor : MonoBehaviour
 
     public void Update()
     {
+        if (minimalLOD) {
+            LookAtCamera();
+            return;
+        }
         if (frameRotation >= updateRotationFrameCount) {
             frameRotation = 0;
             UpdateRotation();
@@ -60,6 +66,9 @@ public class Impostor : MonoBehaviour
 
     public void ForcedUpdate()
     {
+        if (minimalLOD) {
+            return;
+        }
         UpdateRotation();
         LookAtCamera();
         UpdateAnimation();
@@ -102,6 +111,14 @@ public class Impostor : MonoBehaviour
         levelCameraToObject.y = 0;
         float angle = Vector3.Angle(cameraToObject, levelCameraToObject);
         return Mathf.RoundToInt((angle / 90f) * ((Settings.numberOfAngles / 4) - 1));
+    }
+
+    public void SetMinimalLOD(bool enabled)
+    {
+        minimalLOD = enabled;
+        if (enabled) {
+            characterAnimation.NormalizedTime = 0;
+        }
     }
     
     private int GetIndexY(Vector3 cameraToObject)

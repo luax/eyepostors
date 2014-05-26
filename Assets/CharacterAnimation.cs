@@ -9,7 +9,7 @@ public class CharacterAnimation : MonoBehaviour
 
     private Animator animator;
     private SkinnedMeshRenderer characterRenderer;
-    private LOD currentLOD;
+    private LOD oldLOD;
     private Impostor impostorScript;
     private CharacterGazeLOD charGazeLOD;
 
@@ -24,7 +24,7 @@ public class CharacterAnimation : MonoBehaviour
 
     private void DefaultSettings()
     {
-        currentLOD = LOD.Minimal;
+        oldLOD = LOD.Minimal;
 
         characterMesh.SetActive(false);
         impostor.SetActive(true);
@@ -36,19 +36,22 @@ public class CharacterAnimation : MonoBehaviour
         NormalizedTime = NormalizedTime - Mathf.Floor(NormalizedTime);
     }
 
-    private void Impostor(LOD lod)
+    private void Impostor(LOD newLOD)
     {
         UpdateNormalizedTime();
         characterMesh.SetActive(false);
 
-        if (lod == LOD.Medium) {
+        if (newLOD == LOD.Medium) {
             impostorScript.UpdateMaterial(Materials.MediumQuality);
         } else {
             impostorScript.UpdateMaterial(Materials.LowQuality);
-            if (lod == LOD.Minimal) {
-                // TODO
+            if (newLOD == LOD.Minimal) {
+                impostorScript.SetMinimalLOD(true);
             }
         }
+        if (oldLOD == LOD.Minimal) {
+            impostorScript.SetMinimalLOD(false);
+        }   
 
         impostor.SetActive(true);
         impostorScript.ForcedUpdate();
@@ -61,14 +64,14 @@ public class CharacterAnimation : MonoBehaviour
         animator.Play("WalkForward", 0, NormalizedTime);
     }
 
-    public void SetLOD(LOD lod)
+    public void SetLOD(LOD newLOD)
     {
-        if (lod == LOD.High) {
+        if (newLOD == LOD.High) {
             Mesh();
         } else {
-            Impostor(lod);
+            Impostor(newLOD);
         }
-        currentLOD = lod;
+        oldLOD = newLOD;
     }
 
     private void UpdateNormalizedTime()
