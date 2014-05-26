@@ -20,8 +20,6 @@ public class CharacterGazeLOD : MonoBehaviour
     public void Start()
     {
         characterAnimation = gameObject.GetComponent<CharacterAnimation>();
-        characterMesh.SetActive(false);
-        impostor.SetActive(true);
     }
 
     public void Update()

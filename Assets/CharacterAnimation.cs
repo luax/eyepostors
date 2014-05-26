@@ -13,9 +13,6 @@ public class CharacterAnimation : MonoBehaviour
     private Impostor impostorScript;
     private CharacterGazeLOD charGazeLOD;
 
-    private bool meshActivated;
-    private bool impostorActivated;
-
     public void Start()
     {
         animator = transform.FindChild("CharacterMesh").GetComponent<Animator>();
@@ -28,10 +25,9 @@ public class CharacterAnimation : MonoBehaviour
     private void DefaultSettings()
     {
         currentLOD = LOD.Minimal;
-        meshActivated = false;
 
-        characterMesh.SetActive(meshActivated);
-        impostor.SetActive(impostorActivated);
+        characterMesh.SetActive(false);
+        impostor.SetActive(true);
     }
 
     public void Update()
