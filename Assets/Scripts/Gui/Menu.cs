@@ -16,7 +16,9 @@ public class Menu : MonoBehaviour
 
     public void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape)) {
+        if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.KeypadEnter) ||
+            Input.GetKeyDown(KeyCode.Return))
+        {
             showMenu = !showMenu;
             Utils.Instance.Pause(showMenu);
         }
@@ -27,10 +29,18 @@ public class Menu : MonoBehaviour
         if (showMenu) {
             DrawMenu();
         }
+        Event e = Event.current;
     }
 
     protected virtual void DrawMenu()
     {
+        Event e = Event.current;
+        if (e.keyCode == KeyCode.Return) {
+            showMenu = false;
+            Utils.Instance.Pause(showMenu);
+            return;
+        }
+
         GUI.depth = -1;
 
         // Background box
@@ -45,8 +55,8 @@ public class Menu : MonoBehaviour
             Application.Quit();
         }
 
-        GUI.Label(new Rect(left, (top += menuOffset), width, height), "Number of impostors: " + Settings.numberOfImpostors);
-       
+        GUI.Label(new Rect(left, (top += menuOffset), width, height), "Number of impostors");
+
         string text = GUI.TextField(new Rect(left, (top += menuOffset), width, height), Settings.numberOfImpostors.ToString());
         int number;
         if (int.TryParse(text, out number) && number >= Settings.minImpostors && number <= Settings.maxImpostors) {
@@ -54,8 +64,6 @@ public class Menu : MonoBehaviour
         }
 
         GUI.EndGroup();
-
         top = topDefault;
-
     }
 }
