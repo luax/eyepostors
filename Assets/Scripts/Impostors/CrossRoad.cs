@@ -28,8 +28,6 @@ public class CrossRoad : MonoBehaviour
 
     private class Mission
     {
-
-        private GameObject character;
         private CrossRoad cr;
         private Vector3 startPos;
         private Vector3 missionPos;
@@ -37,14 +35,16 @@ public class CrossRoad : MonoBehaviour
         private float time;
         private float speed;
         private StartPosition start;
+        private Vector3 direction;
+        private Transform transform;
 
         public Mission(GameObject g, CrossRoad r, StartPosition s)
         {
-            character = g;
             cr = r;
             start = s;
+            transform = g.transform;
 
-            startPos = g.transform.position;
+            startPos = transform.position;
             GetMission();
             Reset();
         }
@@ -53,8 +53,8 @@ public class CrossRoad : MonoBehaviour
         {
             if ((time += Time.deltaTime) < travelingTime) {
                 float fraction = time / travelingTime;
-                character.transform.position = Vector3.Lerp(startPos, missionPos, fraction);
-                character.transform.rotation = Quaternion.LookRotation(missionPos - character.transform.position);
+                transform.position = Vector3.Lerp(startPos, missionPos, fraction);
+                transform.rotation = Quaternion.LookRotation(direction);
             } else {
                 Respawn();
                 GetMission();
@@ -69,6 +69,7 @@ public class CrossRoad : MonoBehaviour
             startPos.y = cr.characterY;
             missionPos.y = cr.characterY;
             travelingTime = Vector3.Distance(startPos, missionPos) / speed;
+            direction = missionPos - transform.position;
         }
 
         private void Respawn()
@@ -151,24 +152,24 @@ public class CrossRoad : MonoBehaviour
         characters = new List<GameObject>(numberOfImpostors);
     }
 
-    private void RemoveImpostors(int diff)
+    private void RemoveImpostors(int num)
     {
         // TODO: remove on each start position even
-        for (int i = 0; diff > 0 && i < characters.Count; i++) {
+        for (int i = 0; num > 0 && i < characters.Count; i++) {
             GameObject character = characters[i];
             missions.Remove(character);
             characters.RemoveAt(i);
             Destroy(character);
-            diff--;
+            num--;
         }
     }
 
-    private void AddImpostors(int diff)
+    private void AddImpostors(int num)
     {
-        for (int i = 0; i < diff; i++) {
+        for (int i = 0; i < num; i++) {
             GameObject g = (GameObject)Instantiate(character);
             characters.Add(g);
-            StartPosition s = GetStart(i, diff);
+            StartPosition s = GetStart(i, num);
             g.transform.position = GetRandomPosition(g.transform.position, s);
             missions.Add(g, new Mission(g, this, s));
         }
