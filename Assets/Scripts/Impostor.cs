@@ -4,9 +4,9 @@ using System.Collections;
 public class Impostor : MonoBehaviour
 {
     public int ShirtColor { get; set; }
+
     public int updateAnimationFrameCount = 2;
     public int updateRotationFrameCount = 5;
-
     private int quality;
     private int frameRotation;
     private int frameAnimation;
@@ -22,7 +22,6 @@ public class Impostor : MonoBehaviour
     private Vector3 quadRotation;
     private const int RIGHT = 0;
     private const int LEFT = 1;
-    
     
     void Start()
     {
@@ -43,7 +42,7 @@ public class Impostor : MonoBehaviour
         quality = Materials.LowQuality;
         SetMaterial(0, 0);
     }
-    
+
     public void Update()
     {
         if (frameRotation >= updateRotationFrameCount) {
@@ -57,6 +56,13 @@ public class Impostor : MonoBehaviour
         }
         frameRotation++;
         frameAnimation++;
+    }
+
+    public void ForcedUpdate()
+    {
+        UpdateRotation();
+        LookAtCamera();
+        UpdateAnimation();
     }
 
     private void LookAtCamera()

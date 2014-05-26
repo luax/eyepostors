@@ -53,7 +53,9 @@ public class CharacterAnimation : MonoBehaviour
                 // TODO
             }
         }
+
         impostor.SetActive(true);
+        impostorScript.ForcedUpdate();
     }
 
     private void Mesh()
