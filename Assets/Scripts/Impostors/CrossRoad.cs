@@ -170,10 +170,10 @@ public class CrossRoad : MonoBehaviour
     private void Initialize()
     {
         numberOfImpostors = Settings.numberOfImpostors;
-        leftPosition = positions.transform.FindChild("LeftPosition").transform.position;
-        rightPosition = positions.transform.FindChild("RightPosition").transform.position;
-        topPosition = positions.transform.transform.FindChild("TopPosition").transform.position;
-        bottomPosition = positions.transform.transform.FindChild("BottomPosition").transform.position;
+        leftPosition = positions.transform.FindChild("Left").transform.position;
+        rightPosition = positions.transform.FindChild("Right").transform.position;
+        topPosition = positions.transform.transform.FindChild("Top").transform.position;
+        bottomPosition = positions.transform.transform.FindChild("Bottom").transform.position;
         missions = new Dictionary<GameObject, Mission>();
         characters = new List<GameObject>(numberOfImpostors);
     }
