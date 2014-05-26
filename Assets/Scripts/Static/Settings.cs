@@ -18,8 +18,6 @@ public static class Settings
     {
         public const float highestLOD = 0.045f;
         public const float mediumLOD = 1f;
-        public const float lowestLOD = 2f;
-        public const float minimalLOD = 3f;
 
         public const float worldMaximum = 100f;
         public const float worldMedium = 40f;
