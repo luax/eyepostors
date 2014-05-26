@@ -134,18 +134,6 @@ public class Impostor : MonoBehaviour
         return index;
     }
     
-    public void SetFrame(int frameNumber)
-    {
-        float x = (0.125f * (frameNumber % 8));
-        float y = 0.5f - (0.5f * (frameNumber / 8));
-        
-        quad.uv = new Vector2[] { 
-            new Vector2(x + 0.125f, y),
-            new Vector2(x, 0.5f + y),
-            new Vector2(x, y),
-            new Vector2(x + 0.125f, 0.5f + y)}; 
-    }
-    
     public float GetAnimationPercentage()
     {
         return ((float)frameIndex / (float)Settings.numberOfFrames);
@@ -155,7 +143,7 @@ public class Impostor : MonoBehaviour
     {
         frameIndex = Mathf.RoundToInt(percent * Settings.numberOfFrames);
         frameIndex = (frameIndex == Settings.numberOfFrames) ? 0 : frameIndex;
-        SetFrame(frameIndex);
+        quad.uv = Materials.GetUV(frameIndex);
     }
     
     private void SetMaterial(int indexX, int indexY)

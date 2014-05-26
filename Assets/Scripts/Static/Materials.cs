@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public static class Materials
 {
@@ -14,9 +15,15 @@ public static class Materials
     private static Material[] meshMaterials;
     private static string shader = "ShirtColor/Transparent";
     private static Color[] colors;
+    private static Dictionary<int, Vector2[]> uvs;
 
     static Materials()
     {
+        uvs = new Dictionary<int, Vector2[]>();
+        for (int i = 0; i < Settings.numberOfFrames; i++) {
+            uvs.Add(i, CalculateUV(i));
+        }
+        
         impostorMaterials = new Material[numberOfColors, numberOfAngles, numberOfAngles, numberOfQualities];
         meshMaterials = new Material[numberOfColors];
         colors = new Color[numberOfColors];
@@ -44,6 +51,11 @@ public static class Materials
     {
         return impostorMaterials [color, x, y, quality];
     }
+    
+    public static Vector2[] GetUV(int i)
+    {
+        return uvs [i];
+    }
 
     private static Material MakeMaterial(int color)
     {
@@ -65,5 +77,17 @@ public static class Materials
             mat.SetTexture("_BumpMap", (Texture)Resources.Load("GeneratedTextures/Low/normal" + indexX + "_" + indexY));
         }
         return mat;
+    }
+    
+    private static Vector2[] CalculateUV(int i)
+    {
+        float x = (0.125f * (i % 8));
+        float y = 0.5f - (0.5f * (i / 8));
+        
+        return new Vector2[] { 
+            new Vector2(x + 0.125f, y),
+            new Vector2(x, 0.5f + y),
+            new Vector2(x, y),
+            new Vector2(x + 0.125f, 0.5f + y)}; 
     }
 }
