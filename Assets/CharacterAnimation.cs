@@ -24,7 +24,7 @@ public class CharacterAnimation : MonoBehaviour
 
     private void DefaultSettings()
     {
-        oldLOD = LOD.Minimal;
+        oldLOD = LOD.Low;
 
         characterMesh.SetActive(false);
         impostor.SetActive(true);
@@ -39,7 +39,6 @@ public class CharacterAnimation : MonoBehaviour
     private void Impostor(LOD newLOD)
     {
         UpdateNormalizedTime();
-        characterMesh.SetActive(false);
 
         if (newLOD == LOD.Medium) {
             impostorScript.UpdateMaterial(Materials.MediumQuality);
@@ -49,10 +48,8 @@ public class CharacterAnimation : MonoBehaviour
                 impostorScript.SetMinimalLOD(true);
             }
         }
-        if (oldLOD == LOD.Minimal) {
-            impostorScript.SetMinimalLOD(false);
-        }   
 
+        characterMesh.SetActive(false);
         impostor.SetActive(true);
         impostorScript.ForcedUpdate();
     }
@@ -71,6 +68,11 @@ public class CharacterAnimation : MonoBehaviour
         } else {
             Impostor(newLOD);
         }
+
+        if (oldLOD == LOD.Minimal) {
+            impostorScript.SetMinimalLOD(false);
+        }
+
         oldLOD = newLOD;
     }
 

@@ -66,9 +66,6 @@ public class Impostor : MonoBehaviour
 
     public void ForcedUpdate()
     {
-        if (minimalLOD) {
-            return;
-        }
         UpdateRotation();
         LookAtCamera();
         UpdateAnimation();

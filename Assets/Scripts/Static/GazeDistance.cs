@@ -66,15 +66,15 @@ public class GazeDistance : Singleton<GazeDistance>
         Vector3 tPos = gameObject.transform.position;
         float distance = Vector3.Distance(tPos, cPos);
 
-        if (distance > Settings.Distance.worldMaximum) {
+        if (distance >= Settings.Distance.worldMaximum) {
             return LOD.Minimal;
         }
 
-        if (distance > Settings.Distance.worldMedium) {
+        if (distance >= Settings.Distance.worldMedium) {
             return LOD.Low;
         }
 
-        if (distance < Settings.Distance.worldMinimum) {
+        if (distance <= Settings.Distance.worldMinimum) {
             return LOD.High;
         }
 
