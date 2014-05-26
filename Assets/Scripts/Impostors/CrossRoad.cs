@@ -61,10 +61,8 @@ public class CrossRoad : MonoBehaviour
         {
             time = 0;
             speed = Random.Range(1f, 2f);
-            startPos.y = cr.characterY;
-            missionPos.y = cr.characterY;
             travelingTime = Vector3.Distance(startPos, missionPos) / speed;
-            direction = missionPos - transform.position;
+            direction = missionPos - startPos;
             direction.y = 0;
             transform.rotation = Quaternion.LookRotation(direction);
         }
@@ -79,7 +77,6 @@ public class CrossRoad : MonoBehaviour
                     if (random) {
                         startPos.x = Random.Range(cr.leftPosition.x, cr.rightPosition.x);
                     }
-
                     AddOffset(ref startPos, false);
                     AddOffset(ref missionPos, false);
                     break;
