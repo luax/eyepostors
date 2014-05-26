@@ -33,7 +33,9 @@ public class CharacterAnimation : MonoBehaviour
     public void Update()
     {
         NormalizedTime += Time.deltaTime;
-        NormalizedTime = NormalizedTime - Mathf.Floor(NormalizedTime);
+        if (NormalizedTime > 1f) {
+            NormalizedTime = NormalizedTime - (int)NormalizedTime;
+        }
     }
 
     private void Impostor(LOD newLOD)
@@ -82,4 +84,4 @@ public class CharacterAnimation : MonoBehaviour
             Mathf.Floor(animator.GetCurrentAnimatorStateInfo(0).normalizedTime);
     }
 
-}
+}   
