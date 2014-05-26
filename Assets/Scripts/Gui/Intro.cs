@@ -6,7 +6,7 @@ public class Intro : MonoBehaviour
 
     private string introText =
 @"
-Tex text text";
+";
 
     private GUIStyle introStyle;
     private GameObject startCamera;
@@ -28,6 +28,7 @@ Tex text text";
         introStyle.alignment = TextAnchor.MiddleCenter;
         introStyle.fontSize = 32;
         introStyle.normal.textColor = Color.black;
+        introStyle.font = (Font)Resources.Load("fonts/HelveticaCY");
         //Font font = new Font();
         //introStyle.font = font;
 
@@ -36,7 +37,7 @@ Tex text text";
 
     protected virtual void OnGUI()
     {
-        GUI.BeginGroup(new Rect(Screen.width / 2 - 220, Screen.height / 2, Screen.width, Screen.height));
+        GUI.BeginGroup(new Rect(Screen.width / 2 - 200, Screen.height / 2, Screen.width, Screen.height));
    
         if (GUI.Button(new Rect(0, 10, 200, 20), "First person controller")) {
             Player();
