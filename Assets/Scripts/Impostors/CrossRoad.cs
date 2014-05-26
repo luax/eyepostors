@@ -10,7 +10,7 @@ public class CrossRoad : MonoBehaviour
     private int numberOfImpostors;
     private List<GameObject> characters;
     private float characterY;
-    private Dictionary<GameObject, Mission> missions;
+    private Dictionary<int, Mission> missions;
     private Vector3 leftPosition;
     private Vector3 rightPosition;
     private Vector3 topPosition;
@@ -142,13 +142,9 @@ public class CrossRoad : MonoBehaviour
     {
         while (true) {
             if (numberOfImpostors != Settings.numberOfImpostors) {
-                int num = (Settings.numberOfImpostors - numberOfImpostors);
-                if (num < 0) {
-                    RemoveImpostors(Mathf.Abs(num));
-                } else {
-                    AddImpostors(num);
-                }
                 numberOfImpostors = Settings.numberOfImpostors;
+                RemoveImpostors();
+                AddImpostors();
             }
             yield return new WaitForSeconds(1);
         }
@@ -159,11 +155,8 @@ public class CrossRoad : MonoBehaviour
     {
         character = (GameObject)Resources.Load("Character");
         characterY = character.transform.position.y;
-
         Initialize();
-
-        AddImpostors(numberOfImpostors);
-
+        AddImpostors();
         StartCoroutine(UpdateImpostors());
     }
 
@@ -174,36 +167,35 @@ public class CrossRoad : MonoBehaviour
         rightPosition = positions.transform.FindChild("Right").transform.position;
         topPosition = positions.transform.transform.FindChild("Top").transform.position;
         bottomPosition = positions.transform.transform.FindChild("Bottom").transform.position;
-        missions = new Dictionary<GameObject, Mission>();
+        missions = new Dictionary<int, Mission>();
         characters = new List<GameObject>(numberOfImpostors);
     }
 
-    private void RemoveImpostors(int num)
+    private void RemoveImpostors()
     {
-        // TODO: remove on each start position even
-        for (int i = 0; num > 0 && i < characters.Count; i++) {
-            GameObject character = characters[i];
-            missions.Remove(character);
-            characters.RemoveAt(i);
-            Destroy(character);
-            num--;
+        for (int i = 0; i < characters.Count; i++) {
+            Destroy(characters[i]);
         }
+        missions = new Dictionary<int, Mission>();
+        characters = new List<GameObject>(numberOfImpostors);
     }
 
-    private void AddImpostors(int num)
+    private void AddImpostors()
     {
-        for (int i = 0; i < num; i++) {
+        for (int i = characters.Count; i < numberOfImpostors; i++) {
             GameObject g = (GameObject)Instantiate(character);
             characters.Add(g);
-            StartPosition s = GetStart(i, num);
-            missions.Add(g, new Mission(g.transform, this, s));
+            StartPosition s = GetStart(i, numberOfImpostors);
+            missions.Add(i, new Mission(g.transform, this, s));
         }
     }
 
     public void Update()
     {
-        foreach (GameObject g in characters) {
-            missions[g].Handle();
+        for (int i = 0; i < characters.Count; i++) {
+            if (missions.ContainsKey(i)) {
+                missions[i].Handle();
+            }
         }
     }
 
