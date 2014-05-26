@@ -15,7 +15,8 @@ public class CharacterGazeLOD : MonoBehaviour
     public GameObject characterMesh;
     private CharacterAnimation characterAnimation;
     private LOD currentLOD;
-    private float coolDown;
+    private bool coolDown;
+    private float coolDownTimer;
 
     public void Start()
     {
@@ -51,11 +52,18 @@ public class CharacterGazeLOD : MonoBehaviour
 
     private void SetCoolDown()
     {
-        coolDown = Settings.LODcooldownTime;
+        coolDownTimer = Settings.LODcooldownTime;
+        coolDown = true;
     }
 
     private bool CoolDown()
     {
-        return (coolDown -= Time.deltaTime) > 0;
+        if (coolDown) {
+            if ((coolDownTimer -= Time.deltaTime) < 0) {
+                coolDown = false;
+            }
+            return true;
+        }
+        return false;
     }
 }

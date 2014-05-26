@@ -22,7 +22,7 @@ public static class Settings
         public const float minimalLOD = 3f;
 
         public const float worldMaximum = 100f;
-        public const float worldMedium = 20f;
+        public const float worldMedium = 40f;
         public const float worldMinimum = 6f;
     }
 
@@ -39,6 +39,7 @@ public static class Settings
     public static int numberOfImpostors;
 
     // Camera
+    public static Camera camera;
     public static Transform cameraTransform;
 
     // Screen
@@ -47,7 +48,8 @@ public static class Settings
     static Settings()
     {
         if (Camera.main != null) {
-            cameraTransform = Camera.main.transform;
+            camera = Camera.main;
+            cameraTransform = camera.transform;
         }
         numberOfImpostors = defImpostors;
         int w = Screen.width;

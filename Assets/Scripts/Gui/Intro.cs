@@ -55,6 +55,7 @@ Tex text text";
     {
         GameObject player = Instantiate(Resources.Load("Player")) as GameObject;
         SetPosition(player);
+
     }
 
     private void FreeView()
@@ -67,7 +68,8 @@ Tex text text";
     {
         startCamera.GetComponent<Camera>().enabled = false;
         startCamera.tag = "";
-        Settings.cameraTransform = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>().transform;
+        Settings.camera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
+        Settings.cameraTransform = Settings.camera.transform;
         Utils.Instance.SetGazePoint(false);
         LockCursor(true);
         Destroy(startCamera);

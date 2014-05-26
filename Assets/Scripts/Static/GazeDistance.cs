@@ -52,13 +52,13 @@ public class GazeDistance : Singleton<GazeDistance>
             return LOD.Minimal;
         }
 
-        if (Settings.triggerOption == TriggerOption.Gaze) {
+        /*if (Settings.triggerOption == TriggerOption.Gaze) {
             if (!gazePoint.IsValid) {
                 //return float.MaxValue;
                 // TODO
             }
         }
-
+*/
 #if DEBUG
         latestObject = gameObject;
 #endif
@@ -145,7 +145,7 @@ public class GazeDistance : Singleton<GazeDistance>
 
     private Vector3 ConvertToScreenSpace(Vector3 p)
     {
-        Vector3 r = Camera.main.WorldToScreenPoint(p);
+        Vector3 r = Settings.camera.WorldToScreenPoint(p);
         r.y = Screen.height - r.y;
         return r;
     }
