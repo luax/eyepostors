@@ -33,15 +33,11 @@ public class Impostor : MonoBehaviour
         characterAnimation = transform.parent.GetComponent<CharacterAnimation>();
         quadRotation = new Vector3(0, 180f, 0);
         quad = gameObject.GetComponent<MeshFilter>().mesh;
-        quad.uv = new Vector2[] {
-            new Vector2(0.125f, 0.5f),
-            new Vector2(0f, 1f),
-            new Vector2(0f, 0.5f),
-            new Vector2(0.125f, 1f)
-        };
         int[] triangles = new int[]{2, 1, 0, 3, 0, 1}; // rotate quad faces
         quad.triangles = triangles;
+        quad.uv = Materials.GetUV(0);
         quality = Materials.LowQuality;
+       
         SetMaterial(0, 0);
     }
 
