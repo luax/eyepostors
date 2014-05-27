@@ -7,6 +7,9 @@ public class Impostor : MonoBehaviour
 
     public int updateAnimationFrameCount = 2;
     public int updateRotationFrameCount = 5;
+    private int numberOfAngles;
+    private int halfOfAngles;
+    private int numberOfFrames;
     private int quality;
     private int frameRotation;
     private int frameAnimation;
@@ -27,6 +30,9 @@ public class Impostor : MonoBehaviour
 
     void Start()
     {
+        numberOfAngles = Settings.numberOfAngles;
+        halfOfAngles = Settings.numberOfAngles / 2;
+        numberOfFrames = Settings.numberOfFrames;
         impostorTransform = transform;
         parentTransform = impostorTransform.parent;
         impostorRenderer = renderer;
@@ -102,8 +108,8 @@ public class Impostor : MonoBehaviour
     {
         Vector3 levelCameraToObject = cameraToObject;
         levelCameraToObject.y = 0;
-        float angle = Vector3.Angle(cameraToObject, levelCameraToObject);
-        return Mathf.RoundToInt((angle / 90f) * ((Settings.numberOfAngles / 4) - 1));
+        float angle = Mathf.Max(Vector3.Angle(cameraToObject, levelCameraToObject) - 10f, 0f);
+        return Mathf.RoundToInt((angle * numberOfAngles / 360f) - 1);
     }
 
     public void SetMinimalLOD(bool enabled)
@@ -120,22 +126,24 @@ public class Impostor : MonoBehaviour
         Vector3 parentForward = parentTransform.forward;
         parentRight.y = cameraToObject.y = parentForward.y = 0;
         float angle = Vector3.Angle(cameraToObject, parentForward);
-        int index = Mathf.RoundToInt((angle / 180f) * ((Settings.numberOfAngles / 2) - 1));
-        if (Vector3.Dot(cameraToObject, parentRight) > 0f) {
-            index = Settings.numberOfAngles - index - 1;
+        int index = Mathf.RoundToInt((angle * numberOfAngles) / 360f);
+        if (index != 0 && index != halfOfAngles) {
+            if (Vector3.Dot(cameraToObject, parentRight) > 0f) {
+                index = numberOfAngles - index;
+            }
         }
         return index;
     }
     
     public float GetAnimationPercentage()
     {
-        return ((float)frameIndex / (float)Settings.numberOfFrames);
+        return ((float)frameIndex / (float)numberOfFrames);
     }
     
     public void SetAnimationPercentage(float percent)
     {
-        frameIndex = Mathf.RoundToInt(percent * Settings.numberOfFrames);
-        frameIndex = (frameIndex == Settings.numberOfFrames) ? 0 : frameIndex;
+        frameIndex = Mathf.RoundToInt(percent * numberOfFrames);
+        frameIndex = (frameIndex == numberOfFrames) ? 0 : frameIndex;
         quad.uv = Materials.GetUV(frameIndex);
     }
     
