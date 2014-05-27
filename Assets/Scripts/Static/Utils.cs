@@ -3,7 +3,6 @@ using System.Collections;
 
 public class Utils : Singleton<Utils>
 {
-
     private bool gazePoint;
     private GameObject gazePointVisualiser;
 
@@ -14,17 +13,15 @@ public class Utils : Singleton<Utils>
 
     public void ToggleGazePoint()
     {
-        gazePoint = !gazePoint;
-        SetGazePoint(gazePoint);
+        SetGazePoint(!gazePoint);
     }
 
-    public void SetGazePoint(bool enabled) {
-        if (gazePoint)
-        {
+    public void SetGazePoint(bool enabled)
+    {
+        gazePoint = enabled;
+        if (gazePoint) {
             gazePointVisualiser = Instantiate(Resources.Load("GazePointVisualizer")) as GameObject;
-        }
-        else
-        {
+        } else {
             Destroy(gazePointVisualiser);
         }
     }
@@ -43,6 +40,37 @@ public class Utils : Singleton<Utils>
         foreach (MouseLook m in mouseLook) {
             m.enabled = !b;
         }
+    }
+
+    public void CreateFirstPerson()
+    {
+        GameObject currentCamera = GameObject.FindGameObjectWithTag("MainCamera");
+        Settings.camera.tag = "";
+
+        GameObject player = Instantiate(Resources.Load("Player")) as GameObject;
+        player.transform.position = Settings.cameraTransform.position;
+
+        UpdateCamera();
+        Destroy(currentCamera.transform.root.gameObject);
+    }
+
+    public void CreateFreeView()
+    {
+        GameObject currentCamera = GameObject.FindGameObjectWithTag("MainCamera");
+        Settings.camera.tag = "";
+
+        GameObject freeView = Instantiate(Resources.Load("FreeViewCamera")) as GameObject;
+        freeView.transform.position = Settings.cameraTransform.position;
+        freeView.transform.rotation = Settings.cameraTransform.rotation;
+
+        UpdateCamera();
+        Destroy(currentCamera.transform.root.gameObject);
+    }
+
+    public void UpdateCamera()
+    {
+        Settings.camera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
+        Settings.cameraTransform = Settings.camera.transform;
     }
 
 }

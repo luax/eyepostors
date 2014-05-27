@@ -78,11 +78,6 @@ public class GazeDistance : Singleton<GazeDistance>
             return LOD.High;
         }
 
-
-        //if (Vector2.Distance(Camera.main.WorldToScreenPoint(tPos), gazePoint2D) / Settings.diagonalLength > 0.3f) {
-        //    return LOD.Medium;
-        //}
-
         BoundsToScreenRect(gameObject.renderer.bounds);
         distance = DistanceToRectangle() / Settings.diagonalLength;
 

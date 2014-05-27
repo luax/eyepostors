@@ -184,6 +184,7 @@ public class CrossRoad : MonoBehaviour
     {
         for (int i = characters.Count; i < numberOfImpostors; i++) {
             GameObject g = (GameObject)Instantiate(character);
+            g.transform.parent = gameObject.transform;
             characters.Add(g);
             StartPosition s = GetStart(i, numberOfImpostors);
             missions.Add(i, new Mission(g.transform, this, s));

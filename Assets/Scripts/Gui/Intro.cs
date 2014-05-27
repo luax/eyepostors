@@ -6,11 +6,13 @@ public class Intro : MonoBehaviour
 
     private string introText =
 @"
+Press escape to start ...
 ";
 
     private GUIStyle introStyle;
     private GameObject startCamera;
     private LockCursor[] lockCursor;
+    private bool displayIntroText = true;
 
     public void Awake()
     {
@@ -20,66 +22,36 @@ public class Intro : MonoBehaviour
         // Use the start camera
         startCamera = transform.FindChild("StartCamera").gameObject;
         startCamera.SetActive(true);
-        Settings.cameraTransform = startCamera.GetComponent<Camera>().transform;
-
+        Settings.camera = startCamera.GetComponent<Camera>();
+        Settings.cameraTransform = Settings.camera.transform;
 
         // GUI style
         introStyle = new GUIStyle();
         introStyle.alignment = TextAnchor.MiddleCenter;
         introStyle.fontSize = 32;
-        introStyle.normal.textColor = Color.black;
-        introStyle.font = (Font)Resources.Load("fonts/HelveticaCY");
-        //Font font = new Font();
-        //introStyle.font = font;
+        introStyle.normal.textColor = Color.white;
+        introStyle.fontStyle = FontStyle.Bold;
+        //introStyle.font = (Font)Resources.Load("fonts/HelveticaCY");
 
         Utils.Instance.SetGazePoint(true);
     }
 
+    public void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape)) {
+            displayIntroText = !displayIntroText;
+        }
+
+    }
+
     protected virtual void OnGUI()
     {
-        GUI.BeginGroup(new Rect(Screen.width / 2 - 200, Screen.height / 2, Screen.width, Screen.height));
-   
-        if (GUI.Button(new Rect(0, 10, 200, 20), "First person controller")) {
-            Player();
-            Disable(true);
+        if (Input.GetKeyDown(KeyCode.KeypadEnter) || Input.GetKeyDown(KeyCode.Return)) {
+            displayIntroText = true;
         }
-        if (GUI.Button(new Rect(220, 10, 200, 20), "Free view")) {
-            FreeView();
-            Disable(false);
+        if (displayIntroText) {
+            GUI.Label(new Rect(0, 0, Screen.width, Screen.height), introText, introStyle);
         }
-        
-        GUI.EndGroup();
-        GUI.Label(new Rect(0, -Screen.height * 0.15f, Screen.width, Screen.height), introText, introStyle);
-    }
-
-    private void Player()
-    {
-        GameObject player = Instantiate(Resources.Load("Player")) as GameObject;
-        SetPosition(player);
-
-    }
-
-    private void FreeView()
-    {
-        GameObject freeView = Instantiate(Resources.Load("FreeViewCamera")) as GameObject;
-        SetPosition(freeView);
-    }
-
-    private void Disable(bool lol)
-    {
-        startCamera.GetComponent<Camera>().enabled = false;
-        startCamera.tag = "";
-        Settings.camera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
-        Settings.cameraTransform = Settings.camera.transform;
-        Utils.Instance.SetGazePoint(false);
-        LockCursor(true);
-        Destroy(startCamera);
-        Destroy(gameObject);
-    }
-
-    private void SetPosition(GameObject g)
-    {
-        g.transform.position = startCamera.transform.position;
     }
 
     private void LockCursor(bool enabled)

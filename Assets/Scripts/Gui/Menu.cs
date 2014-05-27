@@ -12,55 +12,78 @@ public class Menu : MonoBehaviour
     private int width = 200;
     private int height = 20;
     private int menuOffset = 30;
-    private int items = 5;
+    private int items = 10;
+
+    public void Awake()
+    {
+        textStyle = new GUIStyle();
+        textStyle.normal.textColor = Color.white;
+        textStyle.alignment = TextAnchor.MiddleCenter;
+    }
+
 
     public void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.KeypadEnter) ||
-            Input.GetKeyDown(KeyCode.Return))
+        if (Input.GetKeyDown(KeyCode.Escape))
         {
-            showMenu = !showMenu;
-            Utils.Instance.Pause(showMenu);
+            Toggle();
         }
     }
 
     protected virtual void OnGUI()
     {
-        if (showMenu) {
-            DrawMenu();
-        }
         Event e = Event.current;
-    }
-
-    protected virtual void DrawMenu()
-    {
-        Event e = Event.current;
-        if (e.keyCode == KeyCode.Return) {
+        if (e.keyCode == KeyCode.Return || e.keyCode == KeyCode.KeypadEnter) {
             showMenu = false;
             Utils.Instance.Pause(showMenu);
             return;
         }
+        if (showMenu) {
+            DrawMenu();
+        }
+    }
 
+    private void Toggle()
+    {
+        showMenu = !showMenu;
+        Utils.Instance.Pause(showMenu);
+    }
+
+    protected virtual void DrawMenu()
+    {
         GUI.depth = -1;
 
         // Background box
-        GUI.BeginGroup(new Rect(Screen.width / 2 - 100, Screen.height / 2 - 200, Screen.width, Screen.height));
-        GUI.Box(new Rect(10, 10, 220, items * menuOffset), "Menu");
+        GUI.BeginGroup(new Rect(Screen.width / 2 - width/2, Screen.height / 2 - width, Screen.width, Screen.height));
+        GUI.Box(new Rect(0, top, width + left*2, items * menuOffset), "");
+        GUI.Label(new Rect(left, top, width, height), "Controllers", textStyle);
+
+        if (GUI.Button(new Rect(left, (top += menuOffset), width, height), "First person")) {
+            Utils.Instance.CreateFirstPerson();
+            Toggle();
+        }
+
+        if (GUI.Button(new Rect(left, (top += menuOffset), width, height), "Free camera view")) {
+            Utils.Instance.CreateFreeView();
+            Toggle();
+        }
+
+        GUI.Label(new Rect(left, (top += 2*menuOffset), width, height), "Options", textStyle);
 
         if (GUI.Button(new Rect(left, (top += menuOffset), width, height), "Display gaze point: " + Utils.Instance.GetGazePointStatus())) {
             Utils.Instance.ToggleGazePoint();
         }
 
-        if (GUI.Button(new Rect(left, (top += menuOffset), width, height), "Exit game")) {
-            Application.Quit();
-        }
+        GUI.Label(new Rect(left, (top += menuOffset), width, height), "Number of impostors", textStyle);
 
-        GUI.Label(new Rect(left, (top += menuOffset), width, height), "Number of impostors");
-
-        string text = GUI.TextField(new Rect(left, (top += menuOffset), width, height), Settings.numberOfImpostors.ToString());
+        string text = GUI.TextField(new Rect(2*left, (top += menuOffset), width-left*2, height), Settings.numberOfImpostors.ToString());
         int number;
         if (int.TryParse(text, out number) && number >= Settings.minImpostors && number <= Settings.maxImpostors) {
             Settings.numberOfImpostors = number;
+        }
+
+        if (GUI.Button(new Rect(left, (top += menuOffset * 2), width, height), "Exit game")) {
+            Application.Quit();
         }
 
         GUI.EndGroup();
