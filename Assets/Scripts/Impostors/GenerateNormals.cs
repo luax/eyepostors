@@ -1,12 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class GenerateNormals : MonoBehaviour
-{
+public class GenerateNormals : MonoBehaviour {
 	private Transform myTransform;
 	private Transform midGeoTransform;
 	private SkinnedMeshRenderer myRenderer;
-	private Camera camera;
+	private new Camera camera;
 	private int[] triangles;
 	private Vector3[] vertices;
 	private Vector3[] normals;
@@ -14,49 +13,42 @@ public class GenerateNormals : MonoBehaviour
 	private Color[] colors;
 	private Color normalColor;
 	private float[,] depthBuffer;
-	private int index = 0;
 
-	private struct Pixel
-	{
+	private struct Pixel {
 		public int x;
 		public int y;
 		public float zInv;
 		public Vector3 normal;
 
-		public Pixel (int x, int y, float z, Vector3 normal)
-		{
+		public Pixel (int x, int y, float z, Vector3 normal) {
 			this.x = x;
 			this.y = y;
 			this.zInv = z;
 			this.normal = Vector3.Normalize (normal);
 		}
 
-		public Pixel (Vector3 pos3d, Vector3 normal)
-		{
+		public Pixel (Vector3 pos3d, Vector3 normal) {
 			this.x = (int)pos3d.x;
 			this.y = (int)pos3d.y;
 			this.zInv = 1f / pos3d.z;
 			this.normal = Vector3.Normalize (normal);
 		}
 		
-		public override string ToString ()
-		{
+		public override string ToString () {
 			return "Pixel(position: (" + x + ", " + y + ", " + zInv + "), normal: " + normal + ")";
 		}
 
 
 	}
 	
-	private Color GetNormalColor (Vector3 normal)
-	{
+	private Color GetNormalColor (Vector3 normal) {
 		Color c = new Color (normal.x + 1, normal.y + 1, normal.z + 1) / 2;
 		c.a = 1f;
 		return c;
 	}
 	
 	// Use this for initialization
-	private void Start ()
-	{
+	private void Start () {
 		myTransform = transform;
 		midGeoTransform = myTransform.FindChild ("CarlMidGeo");
 		myRenderer = midGeoTransform.GetComponent<SkinnedMeshRenderer> ();
@@ -69,8 +61,7 @@ public class GenerateNormals : MonoBehaviour
 		normalColor = GetNormalColor (new Vector3 (0, 0, 1));
 	}
 	
-	public Texture2D GetNormal ()
-	{
+	public Texture2D GetNormal () {
 		Mesh mesh = new Mesh ();	
 		myRenderer.BakeMesh (mesh);
 		triangles = mesh.triangles;
@@ -98,8 +89,7 @@ public class GenerateNormals : MonoBehaviour
 		return normalMap;
 	}
 	
-	private bool FacingCamera (int index)
-	{
+	private bool FacingCamera (int index) {
 		for (int i = index; i < index + 3; i++) {
 			Vector3 normal = normals [triangles [i]];
 			if (Vector3.Dot (normal, camera.transform.forward) < 0) {
@@ -109,21 +99,18 @@ public class GenerateNormals : MonoBehaviour
 		return false;
 	}
 
-	private void ResetColors ()
-	{
+	private void ResetColors () {
 		for (int i = 0; i < colors.Length; i++) {
 			colors [i] = normalColor;
 		}
 	}
 	
 
-	private Vector3 ToScreenPosition (Vector3 v)
-	{
+	private Vector3 ToScreenPosition (Vector3 v) {
 		return camera.WorldToScreenPoint (v);
 	}
 
-	private void DrawTriangle (Pixel[] vertices)
-	{
+	private void DrawTriangle (Pixel[] vertices) {
 		int numVertices = vertices.Length;
 		int maxY = int.MinValue;
 		int minY = int.MaxValue;
@@ -161,35 +148,30 @@ public class GenerateNormals : MonoBehaviour
 
 	}
 
-	private void DrawLine (Pixel[] pixels)
-	{
+	private void DrawLine (Pixel[] pixels) {
 		foreach (Pixel p in pixels) {
 			DrawPixel (p);
 		}
 	}
 
-	private void DrawPixel (Pixel p)
-	{
+	private void DrawPixel (Pixel p) {
 		if (p.zInv > depthBuffer [p.x, p.y]) {
 			SetColorInTexture (p.x, p.y, GetNormalColor (p.normal));
 			depthBuffer [p.x, p.y] = p.zInv;
 		}
 	}
 	
-	private void SetColorInTexture (int x, int y, Color color)
-	{
+	private void SetColorInTexture (int x, int y, Color color) {
 		colors [y * Screen.width + x] = color;
 	}
 
-	private Pixel[] GetLine (Pixel a, Pixel b)
-	{	
+	private Pixel[] GetLine (Pixel a, Pixel b) {	
 		int x = Mathf.Abs (a.x - b.x);
 		int y = Mathf.Abs (a.y - b.y);
 		return Interpolate (a, b, Mathf.Max (x, y) + 1);
 	}
 
-	private Pixel[] Interpolate (Pixel a, Pixel b, int n)
-	{
+	private Pixel[] Interpolate (Pixel a, Pixel b, int n) {
 		Pixel[] pixels = new Pixel[n];
 		float factor = Mathf.Max ((n - 1), 1);
 		float stepX = (b.x - a.x) / factor;
