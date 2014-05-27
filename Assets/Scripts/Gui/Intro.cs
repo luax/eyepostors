@@ -27,7 +27,8 @@ Press escape to start ...
 
         // GUI style
         introStyle = new GUIStyle();
-        introStyle.alignment = TextAnchor.MiddleCenter;
+        introStyle.alignment = TextAnchor.UpperCenter;
+        introStyle.contentOffset = new Vector2(0, 30f);
         introStyle.fontSize = 32;
         introStyle.normal.textColor = Color.white;
         introStyle.fontStyle = FontStyle.Bold;

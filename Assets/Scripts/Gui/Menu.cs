@@ -12,7 +12,7 @@ public class Menu : MonoBehaviour
     private int width = 200;
     private int height = 20;
     private int menuOffset = 30;
-    private int items = 10;
+    private int items = 11;
 
     public void Awake()
     {
@@ -24,8 +24,7 @@ public class Menu : MonoBehaviour
 
     public void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
+        if (Input.GetKeyDown(KeyCode.Escape)) {
             Toggle();
         }
     }
@@ -54,8 +53,8 @@ public class Menu : MonoBehaviour
         GUI.depth = -1;
 
         // Background box
-        GUI.BeginGroup(new Rect(Screen.width / 2 - width/2, Screen.height / 2 - width, Screen.width, Screen.height));
-        GUI.Box(new Rect(0, top, width + left*2, items * menuOffset), "");
+        GUI.BeginGroup(new Rect(Screen.width / 2 - width / 2, Screen.height / 2 - width, Screen.width, Screen.height));
+        GUI.Box(new Rect(0, top, width + left * 2, items * menuOffset), "");
         GUI.Label(new Rect(left, top, width, height), "Controllers", textStyle);
 
         if (GUI.Button(new Rect(left, (top += menuOffset), width, height), "First person")) {
@@ -68,7 +67,12 @@ public class Menu : MonoBehaviour
             Toggle();
         }
 
-        GUI.Label(new Rect(left, (top += 2*menuOffset), width, height), "Options", textStyle);
+        if (GUI.Button(new Rect(left, (top += menuOffset), width, height), "Movie view")) {
+            Utils.Instance.CreateIntro();
+            Toggle();
+        }
+
+        GUI.Label(new Rect(left, (top += 2 * menuOffset), width, height), "Options", textStyle);
 
         if (GUI.Button(new Rect(left, (top += menuOffset), width, height), "Display gaze point: " + Utils.Instance.GetGazePointStatus())) {
             Utils.Instance.ToggleGazePoint();
@@ -76,7 +80,7 @@ public class Menu : MonoBehaviour
 
         GUI.Label(new Rect(left, (top += menuOffset), width, height), "Number of impostors", textStyle);
 
-        string text = GUI.TextField(new Rect(2*left, (top += menuOffset), width-left*2, height), Settings.numberOfImpostors.ToString());
+        string text = GUI.TextField(new Rect(2 * left, (top += menuOffset), width - left * 2, height), Settings.numberOfImpostors.ToString());
         int number;
         if (int.TryParse(text, out number) && number >= Settings.minImpostors && number <= Settings.maxImpostors) {
             Settings.numberOfImpostors = number;
