@@ -9,6 +9,7 @@ public class Impostor : MonoBehaviour
     public int updateRotationFrameCount = 5;
     private int numberOfAngles;
     private int halfOfAngles;
+    private int quarterOfAngles;
     private int numberOfFrames;
     private int quality;
     private int frameRotation;
@@ -21,8 +22,6 @@ public class Impostor : MonoBehaviour
     private int frameIndex;
     private int currentAngleIndexX;
     private int currentAngleIndexY;
-    private int currentDirection;
-    private Vector3 quadRotation;
     private const int RIGHT = 0;
     private const int LEFT = 1;
 
@@ -32,12 +31,12 @@ public class Impostor : MonoBehaviour
     {
         numberOfAngles = Settings.numberOfAngles;
         halfOfAngles = Settings.numberOfAngles / 2;
+        quarterOfAngles = Settings.numberOfAngles / 4;
         numberOfFrames = Settings.numberOfFrames;
         impostorTransform = transform;
         parentTransform = impostorTransform.parent;
         impostorRenderer = renderer;
         characterAnimation = transform.parent.GetComponent<CharacterAnimation>();
-        quadRotation = new Vector3(0, 180f, 0);
         quad = gameObject.GetComponent<MeshFilter>().mesh;
         int[] triangles = new int[]{2, 1, 0, 3, 0, 1}; // rotate quad faces
         quad.triangles = triangles;
@@ -108,8 +107,9 @@ public class Impostor : MonoBehaviour
     {
         Vector3 levelCameraToObject = cameraToObject;
         levelCameraToObject.y = 0;
-        float angle = Mathf.Max(Vector3.Angle(cameraToObject, levelCameraToObject) - 10f, 0f);
-        return Mathf.RoundToInt((angle * numberOfAngles / 360f) - 1);
+        float angle = Vector3.Angle(cameraToObject, levelCameraToObject) - 10f;
+        angle = Mathf.Max(angle, 0);    
+        return Mathf.RoundToInt((angle / 90f) * (quarterOfAngles - 1));
     }
 
     public void SetMinimalLOD(bool enabled)
@@ -126,6 +126,7 @@ public class Impostor : MonoBehaviour
         Vector3 parentForward = parentTransform.forward;
         parentRight.y = cameraToObject.y = parentForward.y = 0;
         float angle = Vector3.Angle(cameraToObject, parentForward);
+        
         int index = Mathf.RoundToInt((angle * numberOfAngles) / 360f);
         if (index != 0 && index != halfOfAngles) {
             if (Vector3.Dot(cameraToObject, parentRight) > 0f) {
