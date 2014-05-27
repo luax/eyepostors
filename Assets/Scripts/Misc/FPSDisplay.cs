@@ -5,7 +5,6 @@ public class FPSDisplay : MonoBehaviour
 {
     public int FramesPerSec { get; protected set; }
     public float updateFrequency = 0.5f;
-    public Font font;
 
     private string text;
     private GUIStyle style;
@@ -16,9 +15,9 @@ public class FPSDisplay : MonoBehaviour
         int w = Screen.width, h = Screen.height;
         style = new GUIStyle();
         style.alignment = TextAnchor.UpperLeft;
-        style.fontSize = h * 2 / 100;
-        style.font = font;
-        style.normal.textColor = new Color(1, 1, 1, 1.0f);
+        style.fontSize = 18;
+        style.normal.textColor = Color.white;
+        style.fontStyle = FontStyle.Bold;
         pos = new Rect(5, 5, w, h * 2 / 100);
         StartCoroutine(FPS());
     }

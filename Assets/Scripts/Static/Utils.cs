@@ -88,21 +88,19 @@ public class Utils : Singleton<Utils> {
 		if (gazePointEnabled) {
 			GUI.depth = -2;
 			EyeXGazePoint gazePoint = gazePointProvider.GetLastGazePoint (EyeXGazePointType.GazeLightlyFiltered);
-			Vector3 gazePoint2D;
 			if (!gazePoint.IsWithinScreenBounds || !gazePoint.IsValid) {
 				return;
 			}
 			gazePoints [gazePointIndex] = gazePoint.GUI;
-            
 			for (int i = 0; i < NUM_GAZEPOINTS; i++) {
 				int textureSize = 6;
-                
+	                
 				if (i == gazePointIndex) {
 					textureSize = 16;
 				}
-                
+	                
 				Rect pos = new Rect (gazePoints [i].x - textureSize / 2,
-                                    gazePoints [i].y - textureSize / 2, textureSize, textureSize);
+	                                    gazePoints [i].y - textureSize / 2, textureSize, textureSize);
 				GUI.DrawTexture (pos, gazePointTexture);
 			}
 			gazePointIndex = (gazePointIndex + 1) % NUM_GAZEPOINTS;
