@@ -41,12 +41,12 @@ Press escape to start ...
         if (Input.GetKeyDown(KeyCode.Escape)) {
             displayIntroText = !displayIntroText;
         }
-
     }
 
     protected virtual void OnGUI()
     {
-        if (Input.GetKeyDown(KeyCode.KeypadEnter) || Input.GetKeyDown(KeyCode.Return)) {
+        Event e = Event.current;
+        if (e.keyCode == KeyCode.Return || e.keyCode == KeyCode.KeypadEnter) {
             displayIntroText = true;
         }
         if (displayIntroText) {
