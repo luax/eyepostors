@@ -83,7 +83,6 @@ public class Utils : Singleton<Utils>
 
         GameObject freeView = Instantiate(Resources.Load("FreeViewCamera")) as GameObject;
         freeView.transform.position = Settings.cameraTransform.position;
-        freeView.transform.rotation = Settings.cameraTransform.rotation;
 
         UpdateCamera();
         Destroy(currentCamera.transform.root.gameObject);

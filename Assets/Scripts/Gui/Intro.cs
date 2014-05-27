@@ -6,7 +6,7 @@ public class Intro : MonoBehaviour
 
     private string introText =
 @"
-Press escape to start ...
+Press escape to open the menu
 ";
 
     private GUIStyle introStyle;
@@ -27,9 +27,9 @@ Press escape to start ...
 
         // GUI style
         introStyle = new GUIStyle();
-        introStyle.alignment = TextAnchor.UpperCenter;
-        introStyle.contentOffset = new Vector2(0, 30f);
-        introStyle.fontSize = 32;
+        introStyle.alignment = TextAnchor.LowerCenter;
+        introStyle.contentOffset = new Vector2(0, 20f);
+        introStyle.fontSize = 18;
         introStyle.normal.textColor = Color.white;
         introStyle.fontStyle = FontStyle.Bold;
         //introStyle.font = (Font)Resources.Load("fonts/HelveticaCY");
