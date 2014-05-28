@@ -89,39 +89,39 @@ public class CrossRoad : MonoBehaviour
                 case StartPosition.Left:
                     startPos = cr.leftPosition;
                     missionPos = cr.rightPosition;
-                    if (random) {
-                        startPos.x = Random.Range(cr.leftPosition.x, cr.rightPosition.x);
-                    }
                     AddOffset(ref startPos, false);
                     AddOffset(ref missionPos, false);
                     break;
                 case StartPosition.Top:
                     startPos = cr.topPosition;
                     missionPos = cr.bottomPosition;
-                    if (random) {
-                        startPos.z = Random.Range(cr.bottomPosition.z, cr.topPosition.z);
-                    }
                     AddOffset(ref startPos, true);
                     AddOffset(ref missionPos, true);
                     break;
                 case StartPosition.Right:
                     startPos = cr.rightPosition;
                     missionPos = cr.leftPosition;
-                    if (random) {
-                        startPos.x = Random.Range(cr.leftPosition.x, cr.rightPosition.x);
-                    }
                     AddOffset(ref startPos, false);
                     AddOffset(ref missionPos, false);
                     break;
                 case StartPosition.Bottom:
                     startPos = cr.bottomPosition;
                     missionPos = cr.topPosition;
-                    if (random) {
-                        startPos.z = Random.Range(cr.bottomPosition.z, cr.topPosition.z);
-                    }
                     AddOffset(ref startPos, true);
                     AddOffset(ref missionPos, true);
                     break;
+            }
+            if (random) {
+                switch (start) {
+                    case StartPosition.Top:
+                    case StartPosition.Bottom:
+                        startPos.z += Random.Range(cr.bottomPosition.z, cr.topPosition.z);
+                        break;
+                    case StartPosition.Left:
+                    case StartPosition.Right:
+                        startPos.x += Random.Range(cr.leftPosition.x, cr.rightPosition.x);
+                        break;
+                }
             }
             startPos.y = cr.characterY;
             missionPos.y = cr.characterY;
