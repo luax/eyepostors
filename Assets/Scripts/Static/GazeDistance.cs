@@ -51,13 +51,6 @@ public class GazeDistance : Singleton<GazeDistance>
             return LOD.Minimal;
         }
 
-        /*if (Settings.triggerOption == TriggerOption.Gaze) {
-            if (!gazePoint.IsValid) {
-                //return float.MaxValue;
-                // TODO
-            }
-        }
-*/
 #if DEBUG
         latestObject = gameObject;
 #endif
