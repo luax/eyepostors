@@ -1,167 +1,209 @@
 ﻿using UnityEngine;
+using UnityEditor;
 using System.Collections;
 using System.IO;
 
-public class CaptureCharacter : MonoBehaviour {
+public class CaptureCharacter : MonoBehaviour
+{
 	public Texture2D charTexture;
-	public int textureSizeHorizontal = 1024;
+	public int textureWidth = 1024;
 	public bool saveTextures = true;
 
-	private Vector3 yAxis;
-	private Vector3 xAxis;
-	private int numberOfAngles = 16;
-	private int numberOfFrames = 16;
+	private Rect captureRect;
+	private int numberOfAngles;
+	private int numberOfFrames;
 	private Texture2D texture;
 	private Texture2D normalMap;
+	private Texture2D textureAtlas;
+	private Texture2D normalAtlas;
 	private Transform cameraPivot;
 	private Animator animator;
 	private Transform myTransform;
 	private Transform midGeoTransform;
-	private GenerateNormals normalGenerator;
 	private SkinnedMeshRenderer myRenderer;
-	private int textureSizeVertical;
-	private int frameSizeVertical;
-	private int frameSizeHorizontal;
+	private Camera mainCamera;
+	private int textureHeight;
+	private int frameWidth;
+	private int frameHeight;
+	private int atlasWidth;
+	private int atlasHeight;
 	private int totalFrames;
-	private int frame = 0;
-	private int indexY = 0;
-	private int indexX = 0;
-	private float currentNormalizedTime = 0f;
-	private float startTime;
+	private int frame;
+	private int indexY;
+	private int indexX;
+	private float currentNormalizedTime;
 	private Color[] blankFrame;
 	private Color[] blankNormalFrame;
+	private Color normalColor;
+	private Material textureMaterial;
+	private Material normalMaterial;
 
-	void Start () {   
+	void Start()
+	{   
 		numberOfAngles = Settings.numberOfAngles;
 		numberOfFrames = Settings.numberOfFrames;
-		myTransform = gameObject.transform;
-		midGeoTransform = transform.FindChild ("CarlMidGeo");
-		myRenderer = midGeoTransform.GetComponent<SkinnedMeshRenderer> ();
-		cameraPivot = GameObject.Find ("CameraPivot").transform;
-		normalGenerator = GetComponent<GenerateNormals> ();
-		animator = GetComponent<Animator> ();
-		animator.speed = 0f;
-		yAxis = new Vector3 (0, 1, 0);
-		xAxis = new Vector3 (1, 0, 0);
-        
-		textureSizeVertical = textureSizeHorizontal / 2;
-		Debug.Log ("Making texture with dimensions " + textureSizeHorizontal + "x" + textureSizeVertical);
-		frameSizeHorizontal = textureSizeHorizontal / 8;
-		frameSizeVertical = textureSizeVertical / 2;
-		int framesInRow = textureSizeHorizontal / frameSizeHorizontal;
-		int framesInColumn = textureSizeVertical / frameSizeVertical;
-		totalFrames = framesInRow * framesInColumn;
 
-		int numPixels = frameSizeHorizontal * frameSizeVertical;
+		myTransform = gameObject.transform;
+		midGeoTransform = transform.FindChild("CarlMidGeo");
+		mainCamera = Camera.main;
+		myRenderer = midGeoTransform.GetComponent<SkinnedMeshRenderer>();
+		cameraPivot = GameObject.Find("CameraPivot").transform;
+		animator = GetComponent<Animator>();
+		animator.speed = 0f;
+        
+		textureHeight = textureWidth / 2;
+		frameWidth = textureWidth / 8;
+		frameHeight = textureHeight / 2;
+		atlasWidth = textureWidth * numberOfAngles / 4;
+		atlasHeight = textureHeight * numberOfAngles;	
+		int framesInRow = textureWidth / frameWidth;
+		int framesInColumn = textureHeight / frameHeight;
+		totalFrames = framesInRow * framesInColumn;
+		captureRect = new Rect(Screen.width / 2 - Screen.height / 4, 0, Screen.height / 2, Screen.height);
+
+		int numPixels = frameWidth * frameHeight;
 		blankFrame = new Color[numPixels];
 		blankNormalFrame = new Color[numPixels];
-		Color normalColor = new Color (0.5f, 0.5f, 1f, 1f);
+		normalColor = new Color(0.5f, 0.5f, 1f, 1f);
 		for (int i = 0; i < numPixels; i++) {
 			blankFrame [i] = Color.clear;
 			blankNormalFrame [i] = normalColor;
 		}
+		textureMaterial = new Material(Shader.Find("Diffuse"));
+		normalMaterial = new Material(Shader.Find("Custom/DisplayNormals"));
+		textureMaterial.mainTexture = charTexture;
 		
-		AllocateNewTextures ();
+		texture = new Texture2D(textureWidth, textureHeight, TextureFormat.ARGB32, false);
+		normalMap = new Texture2D(textureWidth, textureHeight, TextureFormat.ARGB32, false);
+		textureAtlas = new Texture2D(atlasWidth, atlasHeight, TextureFormat.ARGB32, false);
+		normalAtlas = new Texture2D(atlasWidth, atlasHeight, TextureFormat.ARGB32, false);
 
-		Camera.main.backgroundColor = Color.clear;
-		myRenderer.material.mainTexture = charTexture;
-		StartCoroutine (CaptureFrames ());
+		mainCamera.backgroundColor = Color.clear;
+		myRenderer.material = textureMaterial;
+		Debug.Log("Making texture with dimensions " + textureWidth + "x" + textureHeight);
+		Debug.Log(numberOfFrames);
+		StartCoroutine(CaptureFrames());
 	}
     
-	private IEnumerator CaptureFrames () {
-		startTime = Time.time;
+	private IEnumerator CaptureFrames()
+	{
+		float startTime = Time.time;
 		for (indexX = 0; indexX < numberOfAngles / 4; indexX++) {
 			for (indexY = 0; indexY < numberOfAngles; indexY++) {
 				for (frame = 0; frame < numberOfFrames; frame++) {
-					yield return new WaitForEndOfFrame ();
-					Capture ();
-					UpdateAnimation ();
+					for (int i = 0; i < 2; i++) {
+						yield return new WaitForEndOfFrame();
+						Capture((i == 0) ? texture : normalMap);
+						SwitchMaterials(i);
+					}
+					UpdateAnimation();
 				}
-				FillTextures ();
-				SaveTextures ();
-				AllocateNewTextures ();
-				RotateCameraY ();
+				FillTextures();
+				AddToAtlas(texture, textureAtlas);
+				AddToAtlas(normalMap, normalAtlas);
+				AllocateNewTextures();
+				RotateCameraY();
 				currentNormalizedTime = 0f;
 				frame = 0;
-				Debug.Log ("X: " + indexX + ", Y: " + indexY);
 			}
-			RotateCameraX ();
+			RotateCameraX();
 			currentNormalizedTime = 0f;
 			indexY = 0;
 		}
-		Debug.Log ("Time to generate imposter: " + (Time.time - startTime) + " seconds");
-	}
-	
-	private void AllocateNewTextures () {
-		texture = new Texture2D (textureSizeHorizontal, textureSizeVertical, TextureFormat.ARGB32, false);
-		normalMap = new Texture2D (textureSizeHorizontal, textureSizeVertical, TextureFormat.ARGB32, false);
-	}
-	
-	private void FillTextures () {
-		for (int i = frame; i < totalFrames; i++) {
-			FillBlankFrame (i, texture, blankFrame);
-			FillBlankFrame (i, normalMap, blankNormalFrame);
+		Debug.Log("Capture done, applying to atlases.");
+		textureAtlas.Apply();
+		normalAtlas.Apply();
+		string path = Application.dataPath + "/Resources/GeneratedTextures/";
+		if (!Directory.Exists(path)) {
+			Directory.CreateDirectory(path);
 		}
-	}
-	
-	private void SaveTextures () {
-		if (saveTextures) {
-			SaveToPNG ("texture" + indexX + "_" + indexY + ".png", texture);
-			SaveToPNG ("normal" + indexX + "_" + indexY + ".png", normalMap);
-		}
-	}
-    
-	// Return part of the screen in a texture.
-	private void Capture () {
-		Texture2D textureFrame = new Texture2D (Screen.width, Screen.height, TextureFormat.ARGB32, false);
-		textureFrame.ReadPixels (new Rect (0f, 0f, Screen.width, Screen.height), 0, 0, false);
-		Texture2D normalFrame = normalGenerator.GetNormal ();
-		SetFrameInTexture (texture, textureFrame);
-		SetFrameInTexture (normalMap, normalFrame);
-	}
-	
-	private void FillBlankFrame (int frame, Texture2D texture, Color[] colors) {
-		Vector2 px = GetXY (frame);
-		int x = (int)px.x;
-		int y = (int)px.y;
-		texture.SetPixels (x, y, frameSizeHorizontal, frameSizeVertical, colors);
-		texture.Apply (false);
-	}
-    
-	private void SetFrameInTexture (Texture2D texture, Texture2D textureFrame) {
-		Vector2 px = GetXY (frame);
-		int x = (int)px.x;
-		int y = (int)px.y;
-		TextureScale.Bilinear (textureFrame, frameSizeHorizontal, frameSizeVertical); 
-		texture.SetPixels (x, y, frameSizeHorizontal, frameSizeVertical, textureFrame.GetPixels ());
-		texture.Apply (false);
-	}
-	
-	private Vector2 GetXY (int frame) {
-		int columns = textureSizeHorizontal / frameSizeHorizontal;		
-		int x = frameSizeHorizontal * (frame % columns);
-		int y = textureSizeVertical - frameSizeVertical * ((frame / columns) + 1);
-		return new Vector2 (x, y);
+		SaveToPNG(Path.Combine(path, textureWidth + "textureAtlas.png"), textureAtlas);
+		SaveToPNG(Path.Combine(path, textureWidth + "normalAtlas.png"), normalAtlas);
+		Debug.Log("Generation finished! Time to generate: " + (Time.time - startTime) + " s.");
 	}
 
-	private void UpdateAnimation () {
+	private void SwitchMaterials(int i)
+	{
+		if (i == 0) {
+			//mainCamera.backgroundColor = normalColor;
+			myRenderer.material = normalMaterial;
+		} else {
+			mainCamera.backgroundColor = Color.clear;
+			myRenderer.material = textureMaterial;
+		}
+	}
+
+	private void AddToAtlas(Texture2D tex, Texture2D atlas)
+	{
+		atlas.SetPixels(indexX * textureWidth, indexY * textureHeight,
+		                textureWidth, textureHeight, tex.GetPixels());
+	}
+	
+	private void AllocateNewTextures()
+	{
+		texture = null;
+		normalMap = null;
+		Resources.UnloadUnusedAssets();
+		texture = new Texture2D(textureWidth, textureHeight, TextureFormat.ARGB32, false);
+		normalMap = new Texture2D(textureWidth, textureHeight, TextureFormat.ARGB32, false);
+	}
+	
+	private void FillTextures()
+	{
+		while (frame < totalFrames) {
+			SetFrameInTexture(texture, blankFrame);
+			SetFrameInTexture(normalMap, blankFrame);
+			frame++;
+		}
+/*		for (int x = 0; x < textureWidth; x++) {
+			for (int y = 0; y < textureHeight; y++) {
+				if (normalMap.GetPixel(x, y).a == 0f) {
+					normalMap.SetPixel(x, y, normalColor);
+				}
+			}
+		}*/
+		texture.Apply(false);
+		normalMap.Apply(false);
+	}
+    
+	private void Capture(Texture2D tex)
+	{
+		Texture2D textureFrame = new Texture2D(Screen.height / 2, Screen.height, TextureFormat.ARGB32, false);
+		textureFrame.ReadPixels(captureRect, 0, 0, false);
+		TextureScale.Bilinear(textureFrame, frameWidth, frameHeight); 
+		SetFrameInTexture(tex, textureFrame.GetPixels());
+	}
+
+	private void SetFrameInTexture(Texture2D texture, Color[] pixels)
+	{
+		int columns = textureWidth / frameWidth;		
+		int x = frameWidth * (frame % columns);
+		int y = textureHeight - frameHeight * ((frame / columns) + 1);
+		texture.SetPixels(x, y, frameWidth, frameHeight, pixels);
+	}
+
+	private void UpdateAnimation()
+	{
 		currentNormalizedTime += (float)(1f / numberOfFrames);
-		animator.ForceStateNormalizedTime (currentNormalizedTime);
-		midGeoTransform.position = new Vector3 (0f, 0f, 0f);
-		myTransform.position = new Vector3 (0f, 0f, 0f);
+		animator.ForceStateNormalizedTime(currentNormalizedTime);
+		midGeoTransform.position = new Vector3(0f, 0f, 0f);
+		myTransform.position = new Vector3(0f, 0f, 0f);
 	}
     
-	private void RotateCameraY () {
-		cameraPivot.eulerAngles -= yAxis * (360f / numberOfAngles);
+	private void RotateCameraY()
+	{
+		cameraPivot.eulerAngles -= Vector3.up * (360f / numberOfAngles);
 	}
     
-	private void RotateCameraX () {
+	private void RotateCameraX()
+	{
 		Vector3 e = cameraPivot.eulerAngles;
-		cameraPivot.eulerAngles = new Vector3 (e.x, 0, 0);
-		cameraPivot.eulerAngles -= xAxis * (75 / ((numberOfAngles / 4) - 1));
+		cameraPivot.eulerAngles = new Vector3(e.x, 0, 0);
+		cameraPivot.eulerAngles -= Vector3.right * (75 / ((numberOfAngles / 4) - 1));
 	}
     
-	public void SaveToPNG (string name, Texture2D tex) {
-		File.WriteAllBytes (Application.dataPath + "/Resources/GeneratedTextures/Low/" + name, tex.EncodeToPNG ());
+	public void SaveToPNG(string path, Texture2D tex)
+	{
+		File.WriteAllBytes(path, tex.EncodeToPNG());
 	}
 }
