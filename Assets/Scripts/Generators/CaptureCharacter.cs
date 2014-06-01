@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using UnityEditor;
 using System.Collections;
 using System.IO;
 
@@ -8,8 +7,6 @@ public class CaptureCharacter : MonoBehaviour
 	public Texture2D charTexture;
 	public int textureWidth = 1024;
 	public bool saveTextures = true;
-
-	private Rect captureRect;
 	private int numberOfAngles;
 	private int numberOfFrames;
 	private Texture2D texture;
@@ -31,10 +28,11 @@ public class CaptureCharacter : MonoBehaviour
 	private int frame;
 	private int indexY;
 	private int indexX;
+	private Rect captureRect;
 	private float currentNormalizedTime;
+	private Color normalColor;
 	private Color[] blankFrame;
 	private Color[] blankNormalFrame;
-	private Color normalColor;
 	private Material textureMaterial;
 	private Material normalMaterial;
 
@@ -94,7 +92,7 @@ public class CaptureCharacter : MonoBehaviour
 					for (int i = 0; i < 2; i++) {
 						yield return new WaitForEndOfFrame();
 						Capture((i == 0) ? texture : normalMap);
-						SwitchMaterials(i);
+						myRenderer.material = i == 0 ? normalMaterial : textureMaterial;
 					}
 					UpdateAnimation();
 				}
@@ -122,20 +120,9 @@ public class CaptureCharacter : MonoBehaviour
 		Debug.Log("Generation finished! Time to generate: " + (Time.time - startTime) + " s.");
 	}
 
-	private void SwitchMaterials(int i)
-	{
-		if (i == 0) {
-			//mainCamera.backgroundColor = normalColor;
-			myRenderer.material = normalMaterial;
-		} else {
-			mainCamera.backgroundColor = Color.clear;
-			myRenderer.material = textureMaterial;
-		}
-	}
-
 	private void AddToAtlas(Texture2D tex, Texture2D atlas)
 	{
-		atlas.SetPixels(indexX * textureWidth, indexY * textureHeight,
+		atlas.SetPixels(indexX * textureWidth, atlasHeight - (indexY + 1) * textureHeight,
 		                textureWidth, textureHeight, tex.GetPixels());
 	}
 	
@@ -155,13 +142,17 @@ public class CaptureCharacter : MonoBehaviour
 			SetFrameInTexture(normalMap, blankFrame);
 			frame++;
 		}
-/*		for (int x = 0; x < textureWidth; x++) {
+
+		// Set blank pixels to normal map color.
+		// We could do this before capturing but we don't want
+		// to get seizures.
+		for (int x = 0; x < textureWidth; x++) {
 			for (int y = 0; y < textureHeight; y++) {
 				if (normalMap.GetPixel(x, y).a == 0f) {
 					normalMap.SetPixel(x, y, normalColor);
 				}
 			}
-		}*/
+		}
 		texture.Apply(false);
 		normalMap.Apply(false);
 	}

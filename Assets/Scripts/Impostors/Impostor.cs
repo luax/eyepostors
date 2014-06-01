@@ -22,9 +22,6 @@ public class Impostor : MonoBehaviour
     private int frameIndex;
     private int currentAngleIndexX;
     private int currentAngleIndexY;
-    private const int RIGHT = 0;
-    private const int LEFT = 1;
-
     private bool minimalLOD;
 
     void Start()
@@ -38,28 +35,33 @@ public class Impostor : MonoBehaviour
         impostorRenderer = renderer;
         characterAnimation = transform.parent.GetComponent<CharacterAnimation>();
         quad = gameObject.GetComponent<MeshFilter>().mesh;
-        int[] triangles = new int[]{2, 1, 0, 3, 0, 1}; // rotate quad faces
-        quad.triangles = triangles;
-        quad.uv = Materials.GetUV(0);
-        quality = Materials.LowQuality;
-       
-        SetMaterial(0, 0);
+        quad.triangles = new int[]{2, 1, 0, 3, 0, 1}; // rotate quad faces
+        quad.uv = Materials.GetUV(0, 0, 0);
+        quality = Materials.MediumQuality;
+        SetMaterial();
     }
 
     public void Update()
     {
+        bool replaceUVs = false;
         if (minimalLOD) {
             LookAtCamera();
             return;
         }
         if (frameRotation >= updateRotationFrameCount) {
             frameRotation = 0;
-            UpdateRotation();
+            if (UpdateRotation()) {
+                replaceUVs = true;
+            }
             LookAtCamera();
         }
         if (frameAnimation >= updateAnimationFrameCount) {
+            replaceUVs = true;
             frameAnimation = 0;
             UpdateAnimation();
+        }
+        if (replaceUVs) {
+            quad.uv = Materials.GetUV(currentAngleIndexX, currentAngleIndexY, frameIndex);
         }
         frameRotation++;
         frameAnimation++;
@@ -70,6 +72,7 @@ public class Impostor : MonoBehaviour
         UpdateRotation();
         LookAtCamera();
         UpdateAnimation();
+        quad.uv = Materials.GetUV(currentAngleIndexX, currentAngleIndexY, frameIndex);
     }
 
     private void LookAtCamera()
@@ -82,16 +85,17 @@ public class Impostor : MonoBehaviour
         SetAnimationPercentage(characterAnimation.NormalizedTime);
     }
     
-    public void UpdateRotation()
+    public bool UpdateRotation()
     {
         Vector3 cameraToObject = Settings.cameraTransform.position - parentTransform.position;
         int indexX = GetIndexX(cameraToObject);
         int indexY = GetIndexY(cameraToObject);
         if (indexY != currentAngleIndexY || indexX != currentAngleIndexX) {
-            SetMaterial(indexX, indexY);
             currentAngleIndexX = indexX;
             currentAngleIndexY = indexY;
+            return true;
         }
+        return false;
     }
 
     public void UpdateMaterial(int q)
@@ -100,7 +104,7 @@ public class Impostor : MonoBehaviour
             return;
         }
         quality = q;
-        SetMaterial(currentAngleIndexX, currentAngleIndexY);
+        SetMaterial();
     }
     
     private int GetIndexX(Vector3 cameraToObject)
@@ -145,11 +149,10 @@ public class Impostor : MonoBehaviour
     {
         frameIndex = Mathf.RoundToInt(percent * numberOfFrames);
         frameIndex = (frameIndex == numberOfFrames) ? 0 : frameIndex;
-        quad.uv = Materials.GetUV(frameIndex);
     }
     
-    private void SetMaterial(int indexX, int indexY)
+    private void SetMaterial()
     {
-        impostorRenderer.sharedMaterial = Materials.GetMaterial(ShirtColor, indexX, indexY, quality);
+        impostorRenderer.sharedMaterial = Materials.GetMaterial(ShirtColor, quality);
     }
 }
