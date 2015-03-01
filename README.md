@@ -20,3 +20,9 @@ To do this, several features were needed:
 
 ## Youtube demo
 [![Alt text for your video](http://img.youtube.com/vi/dksd5AL-op4/0.jpg)](http://www.youtube.com/watch?v=dksd5AL-op4)
+
+## Creators
+**Ludvig Axelsson**
+**Håkan Eriksson**
+**Tim Lindeberg**
+**Martin Schön**
